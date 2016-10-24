@@ -39,7 +39,7 @@ call vundle#begin()
 
 Plugin 'VundleVim/Vundle.vim'
 
-Plugin 'tmhedberg/SimpylFold'
+"Plugin 'tmhedberg/SimpylFold'
 
 "Plugin 'vim-scripts/indentpython.vim'
 "code completion
@@ -60,13 +60,13 @@ Plugin 'kien/ctrlp.vim'
 "Plugin 'rking/ag.vim'
 Plugin 'mhinz/vim-grepper'
 
-"Plugin 'Lokaltog/powerline'
+Plugin 'Lokaltog/powerline'
 
 Plugin 'scrooloose/nerdcommenter'
 Plugin 'majutsushi/tagbar'
 Plugin 'FelikZ/ctrlp-py-matcher'
 "more beautiful powerline
-Plugin 'vim-airline/vim-airline'
+"Plugin 'vim-airline/vim-airline'
 "theme
 "Plugin 'nanotech/jellybeans.vim'
 "theme
