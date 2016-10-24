@@ -177,13 +177,11 @@ let g:nerdtree_tabs_open_on_console_startup=1       "automatically open nerdtree
 let g:ctrlp_max_files = 0
 let g:minBufExplForceSyntaxEnable = 1
 let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
-"ag
+"rg
 "let g:ackprg = 'ag --nogroup --nocolor --column'
-if executable('ag')
-	"Use ag over grep
-	set grepprg=ag\ --nogroup\ --nocolor
+if executable('rg')
 	"Use ag in Ctrlp for listing files
-	let g:ctrlp_user_command='ag %s -l --nocolor -g ""'
+	let g:ctrlp_user_command='rg --files %s --color never'
 	"ag is fast enough that Ctrlp doesn't need to cache
 	let g:ctrlp_use_caching = 1
 endif
@@ -303,10 +301,10 @@ ca kills KillServers
 ca restartbattle RestartBattle
 ca killc StopClient
 "search map
-nnoremap <expr> <leader>ft ':GrepperAg --python -w  ' . g:g4_project_root. '\<C-Left><Left>'
-nnoremap <expr> <leader>fc ':GrepperAg --python -w  ' . g:g4_project_root. '\client\script\<C-Left><Left>'
-nnoremap <expr> <leader>fs ':GrepperAg --python -w  ' . g:g4_project_root. '\server\<C-Left><Left>'
-nnoremap <expr> <leader>fa ':GrepperAg -w  ' . g:g4_project_root. '\client\res\ui\as3\<C-Left><Left>'
+nnoremap <expr> <leader>ft ':GrepperRg -tpy -w  ' . g:g4_project_root. '\<C-Left><Left>'
+nnoremap <expr> <leader>fc ':GrepperRg -tpy -w  ' . g:g4_project_root. '\client\script\<C-Left><Left>'
+nnoremap <expr> <leader>fs ':GrepperRg -tpy -w  ' . g:g4_project_root. '\server\<C-Left><Left>'
+nnoremap <expr> <leader>fa ':GrepperRg -w  ' . g:g4_project_root. '\client\res\ui\as3\<C-Left><Left>'
 
 let g:is_generating_ctags = 0
 if exists('*job_start')
