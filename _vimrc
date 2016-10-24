@@ -34,7 +34,11 @@ behave mswin
 "settings for glsl.vim
 let g:glsl_file_extensions = '*.glsl,*.vs,*.ps,*.fx,*.frag,*.vert,*.nfx'
 filetype off
-set rtp+=%USERPROFILE%/.vim/bundle/Vundle.vim
+if has('win32')
+	set rtp+=%USERPROFILE%/.vim/bundle/Vundle.vim
+else
+	set rtp+=~/.vim/bundle/Vundle.vim
+endif
 call vundle#begin()
 
 Plugin 'VundleVim/Vundle.vim'
