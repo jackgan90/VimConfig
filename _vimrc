@@ -208,23 +208,27 @@ import telnetlib
 import subprocess
 import vim
 tn = None
-client_processes = []
-def connect_to_client():
-	global tn
-	try:
-		tn = telnetlib.Telnet('localhost', 30000)
-		tn.write('\r\n')
-		print 'Client Connected!'
-	except:
-		tn = None
+def connect_to_client(callback=None):
+	def do_connect():
+		global tn
+		try:
+			tn = telnetlib.Telnet('localhost', 30000)
+			tn.write('\r\n')
+			print 'Client Connected!'
+			if callable(callback):
+				callback()
+		except:
+			tn = None
+	import _thread
+	_thread.start_new_thread(do_connect, ())
 
 def execute_client_gm(cmd):
 	global tn
 	try:
 		tn.write('$%s\r\n' % cmd)
 	except:
-		connect_to_client()
-		tn.write('$%s\r\n' % cmd)
+		connect_to_client(lambda : tn.write('$%s\r\n' % cmd))
+		
 
 def reload_current_file():
 	import base64
@@ -242,27 +246,27 @@ def reinit_client_telnet():
 		tn.close()
 	connect_to_client()
 
-def stop_client(clientIndex=-1):
-	clientIndex = int(clientIndex)
-	global client_processes
-	if clientIndex == -1:
-		for p in client_processes:
-			if p:
-				p.terminate()
-		client_processes = []
-	elif 0 <= clientIndex < len(client_processes):
-		if client_processes[clientIndex]:
-			client_processes[clientIndex].terminate()
-		del client_processes[clientIndex]
-	else:
-		raise Exception('invalid client index!%d'% clientIndex)
+def stop_client():
+	import psutil
+	projectRoot = vim.eval('g:g4_project_root')
+	for process in psutil.process_iter():
+		try:
+			if process.name() != 'client.exe':
+				continue
+			if process.exe().lower().find(projectRoot) >= 0:
+				process.kill()
+		except:
+			pass
+
 
 def launch_client(count=1):
+	try:
+		count = int(count)
+	except:
+		count = 1
 	for i in xrange(count):
 		project_root = vim.eval('g:g4_project_root')
-		p = subprocess.Popen('%s\client\engine\client\client.exe' % project_root,cwd='client')
-		if p:
-			client_processes.append(p)
+		subprocess.Popen('%s\client\engine\client\client.exe' % project_root,cwd='client')
 
 
 EOF
@@ -287,7 +291,7 @@ command! -nargs=? StartClient python launch_client(<f-args>)
 command! AllServer execute('!start /B cd '. g:g4_project_root . '\server\ServerLauncher && start.bat && battle.bat')
 command! KillServers execute('!start /B cd ' . g:g4_project_root . '\server\ServerLauncher && kill.bat')
 command! RestartBattle execute('!start /B cd ' . g:g4_project_root . '\server\ServerLauncher && killbattle.bat && battle.bat')
-command! -nargs=? StopClient python stop_client(<f-args>)
+command! StopClient python stop_client()
 command! -nargs=* RunServerScript execute('!start /B cd '. g:g4_project_root . '\server\ServerLauncher && '.<q-args>)
 command! UpTrunk execute('silent! !svn up ' . g:g4_project_root)
 command! UpDesign execute('silent! !svn up ' . g:g4_project_root. '\..\design')
