@@ -219,8 +219,8 @@ def connect_to_client(callback=None):
 				callback()
 		except:
 			tn = None
-	import _thread
-	_thread.start_new_thread(do_connect, ())
+	import thread
+	thread.start_new_thread(do_connect, ())
 
 def execute_client_gm(cmd):
 	global tn
