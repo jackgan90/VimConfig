@@ -204,30 +204,61 @@ endfunction
 
 nnoremap <leader>go :call G4ChangeCWDToProjectRoot()<CR>
 python << EOF
+DEFAULT_TELNET_PORT = 30000
 import telnetlib
 import subprocess
 import vim
-tn = None
+telnetClients = {}
+
+def get_client_count():
+	import psutil
+	count = 0
+	projectRoot = vim.eval('g:g4_project_root')
+	for process in psutil.process_iter():
+		try:
+			if process.name() != 'client.exe':
+				continue
+			if process.exe().lower().find(projectRoot) >= 0:
+				count += 1
+		except:
+			pass
+	return count
+
 def connect_to_client(callback=None):
 	def do_connect():
-		global tn
-		try:
-			tn = telnetlib.Telnet('localhost', 30000)
-			tn.write('\r\n')
-			print 'Client Connected!'
-			if callable(callback):
-				callback()
-		except:
-			tn = None
+		global telnetClients
+		clientCount = get_client_count()
+		for i in xrange(clientCount):
+			port =DEFAULT_TELNET_PORT + i
+			if port in telnetClients:
+				continue
+			try:
+				tn = telnetlib.Telnet('localhost', port)
+				tn.write('\r\n')
+				print 'Client Connected!', port
+				telnetClients[port] = tn
+				if callable(callback):
+					callback(tn)
+			except:
+				pass
 	import thread
 	thread.start_new_thread(do_connect, ())
 
 def execute_client_gm(cmd):
-	global tn
-	try:
-		tn.write('$%s\r\n' % cmd)
-	except:
-		connect_to_client(lambda : tn.write('$%s\r\n' % cmd))
+	validPorts = []
+	invalidPorts = []
+	global telnetClients
+	for port, tc in telnetClients.iteritems():
+		try:
+			tc.write('$%s\r\n' % cmd)
+			validPorts.append(port)
+		except:
+			invalidPorts.append(port)
+
+	for port in invalidPorts:
+		del telnetClients[port]
+
+	connect_to_client(lambda tn: tn.write('$%s\r\n' % cmd))
 		
 
 def reload_current_file():
@@ -241,10 +272,13 @@ def reload_current_file():
 
 
 def reinit_client_telnet():
-	global tn
-	if tn:
-		tn.close()
+	global telnetClients
+	for tc in telnetClients.itervalues():
+		tc.close()
+	telnetClients = {}
 	connect_to_client()
+
+
 
 def stop_client():
 	import psutil
