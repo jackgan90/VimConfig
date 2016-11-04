@@ -85,9 +85,9 @@ Plugin 'tomasr/molokai'
 "Plugin 'juneedahamed/svnj.vim'
 "Plugin 'powerline/powerline'
 Plugin 'itchyny/lightline.vim'
-"for vc.vim,dont't forget to add the following line in svn.vim at line 603 and 613
-" let curline = iconv(curline, 'chinese', 'utf-8')
 Plugin 'juneedahamed/vc.vim'
+Plugin 'tpope/vim-surround'
+Plugin 'tpope/vim-repeat'
 call vundle#end()
 
 let mapleader = ','
