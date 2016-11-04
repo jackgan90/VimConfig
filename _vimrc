@@ -139,6 +139,7 @@ set foldmethod=indent
 set foldlevel=99
 "prevent from encoding error
 set encoding=utf-8
+set fileencoding=utf-8
 set fileencodings=utf-8,chinese,latin-1
 "show line numbers
 set nu
@@ -155,7 +156,6 @@ set tabstop=4
 set softtabstop=4
 set noexpandtab
 set shiftwidth=4
-set fileencoding=utf-8
 if has("win32")
 	set backup
 	set backupdir=C:\WINDOWS\Temp
@@ -341,7 +341,6 @@ ca conclient ReInitClientTelnet
 ca reloads ReloadServer
 ca reloadb BattleGMReload
 ca reload ClientGMReload
-ca server StartServer
 ca battle StartBattle
 ca client StartClient
 ca servers AllServer
@@ -529,3 +528,16 @@ nnoremap <leader>sp :call InsertPythonProfileStart()\<CR>
 nnoremap <leader>ep :call InsertPythonProfileEnd()\<CR>
 nnoremap <expr> <leader>vp ':silent! !start /B pyprof2calltree -k -i ' . g:g4_project_root .  '/profresult.prof' . "\<CR>"
 
+"This function is for vc.vim,forcing it to convert line from chinese encoding to
+"utf-8 encoding
+func! Before_vc_setline(start, lines)
+	let s:convlines = []
+	if type(a:lines) == type([])
+		for idx in range(0, len(a:lines) - 1)
+			call add(s:convlines, iconv(a:lines[idx], 'chinese', 'utf-8'))
+		endfor
+	else
+		let s:convlines = iconv(a:lines, 'chinese', 'utf-8')
+	endif
+	return s:convlines
+endf
