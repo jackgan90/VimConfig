@@ -88,6 +88,10 @@ Plugin 'itchyny/lightline.vim'
 Plugin 'juneedahamed/vc.vim'
 Plugin 'tpope/vim-surround'
 Plugin 'tpope/vim-repeat'
+Plugin 'easymotion/vim-easymotion'
+Plugin 'haya14busa/incsearch.vim'
+Plugin 'haya14busa/incsearch-fuzzy.vim'
+Plugin 'haya14busa/incsearch-easymotion.vim'
 call vundle#end()
 
 let mapleader = ','
@@ -133,7 +137,28 @@ onoremap pf :call FindPythonFunctionUnderCursor()<CR>
 onoremap pc :call FindPythonClassUnderCursor()<CR>
 nnoremap <leader>F :call GotoNextPythonFunction()<CR>
 nnoremap <F5> :!python %<CR>
+"For easymotion and incsearch
+let g:EasyMotion_smartcase = 1
+map <Leader> <Plug>(easymotion-prefix)
+map /  <Plug>(incsearch-forward)
+map ?  <Plug>(incsearch-backward)
+map g/ <Plug>(incsearch-stay)
+map z/ <Plug>(incsearch-easymotion-/)
+map z? <Plug>(incsearch-easymotion-?)
+map zg/ <Plug>(incsearch-easymotion-stay)
+" incsearch.vim x fuzzy x vim-easymotion
 
+function! s:config_easyfuzzymotion(...) abort
+  return extend(copy({
+  \   'converters': [incsearch#config#fuzzy#converter()],
+  \   'modules': [incsearch#config#easymotion#module({'overwin' : 1})],
+  \   'keymap': {"\<CR>": '<Over>(easymotion)'},
+  \   'is_expr': 0,
+  \   'is_stay': 1
+  \ }), get(a:, 1, {}))
+endfunction
+
+noremap <silent><expr> <Space>/ incsearch#go(<SID>config_easyfuzzymotion())
 "options
 set foldmethod=indent
 set foldlevel=99
