@@ -320,12 +320,14 @@ def reload_current_file():
 		target = base64.b64encode(bytearray(filename, 'utf-8'))
 		execute_client_gm('reloadTarget %s' % target)
 
-
-def reinit_client_telnet():
+def close_telnet_clients():
 	global telnetClients
 	for tc in telnetClients.itervalues():
 		tc.close()
 	telnetClients = {}
+
+def reinit_client_telnet():
+	close_telnet_clients()
 	connect_to_client()
 
 
@@ -362,6 +364,7 @@ reload_current_file()
 EOF
 	endif
 endfunction
+
 au BufWrite *.py call G4ReloadCurrentFile()
 command! -nargs=? ClientGM python execute_client_gm(<f-args>)
 command! ClientGMReload python execute_client_gm('reload')
@@ -381,6 +384,9 @@ command! UpTrunk execute('silent! !svn up ' . g:g4_project_root)
 command! UpDesign execute('silent! !svn up ' . g:g4_project_root. '\..\design')
 command! UpOutsource execute('silent! !svn up ' . g:g4_project_root. '\..\outsource')
 command! LocalExportTable execute('silent! !cd ' . g:g4_project_root.  '\client\tools\export_table_tool_new && export_use_addedFiles')
+command! ModelEditor execute('silent! !start /B ' . g:g4_project_root. '\..\outsource\neox\tool_new\modeleditor.exe')
+command! FxEditor execute('silent! !start /B ' . g:g4_project_root.  '\..\outsource\neox\tool_new\FxEdit.exe')
+command! SceneEditor execute('silent! !start /B ' . g:g4_project_root.  '\..\outsource\neox\tool_new\sceneeditor.exe')
 ca gm ClientGM
 ca conclient ReInitClientTelnet
 ca reloads ReloadServer
@@ -583,3 +589,4 @@ func! Before_vc_setline(start, lines)
 	endif
 	return s:convlines
 endf
+
