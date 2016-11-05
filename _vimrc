@@ -99,10 +99,31 @@ autocmd FileType python setlocal noexpandtab tabstop=4 softtabstop=4 shiftwidth=
 au BufNewFile *.py call setline(1, '# -*- coding: utf-8 -*-')
 au BufRead,BufNewFile *.as set filetype=javascript
 
+"helper functions
+function! IsBlankLine(lineNum)
+	return getline(a:lineNum) !~# '\v\S'
+endfunction
+
+func! EditMYVIMRC()
+	let linenum = line('$')
+	let empty_buf = 1
+	for idx in range(1, linenum)
+		if !IsBlankLine(idx)
+			let empty_buf = 0
+			break
+		endif
+	endfor
+	if !empty_buf
+		execute "normal! :vsplit $MYVIMRC\<CR>"
+	else
+		execute "normal! :e $MYVIMRC\<CR>"
+	endif
+endf
+
 "use space to fold
 nnoremap <space> za
 "vimrc editing mapping
-nnoremap <leader>ev :vsplit $MYVIMRC<CR>
+nnoremap <leader>ev :call EditMYVIMRC()<CR>
 nnoremap <leader>er :source $MYVIMRC<CR>
 "Ycm key mappings
 nnoremap <leader>gl : YcmCompleter GoToDeclaration<CR>
@@ -120,8 +141,6 @@ nnoremap <ESC> :nohl<CR>
 "nnoremap <silent> <leader>pw :call WindowSwap#DoWindowSwap()<CR>
 "nnoremap <silent> <leader>ww :call WindowSwap#EasyWindowSwap()<CR>
 "For tab operation
-nnoremap <leader>h :tabprevious<CR>
-nnoremap <leader>l :tabnext<CR>
 nnoremap <leader>c :tabclose<CR>
 "tagbar 
 nnoremap <leader>t :TagbarToggle<CR>
@@ -411,10 +430,6 @@ else
 endif
 "G4 routine end
 
-"helper functions
-function! IsBlankLine(lineNum)
-	return getline(a:lineNum) !~# '\v\S'
-endfunction
 
 function! FindNextBlankLineOrViceVersa(startLine, findBlank)
 	let maxLine = line('$')
