@@ -379,6 +379,7 @@ command! StopClient python stop_client()
 command! -nargs=* RunServerScript execute('!start /B cd '. g:g4_project_root . '\server\ServerLauncher && '.<q-args>)
 command! UpTrunk execute('silent! !svn up ' . g:g4_project_root)
 command! UpDesign execute('silent! !svn up ' . g:g4_project_root. '\..\design')
+command! UpOutsource execute('silent! !svn up ' . g:g4_project_root. '\..\outsource')
 command! LocalExportTable execute('silent! !cd ' . g:g4_project_root.  '\client\tools\export_table_tool_new && export_use_addedFiles')
 ca gm ClientGM
 ca conclient ReInitClientTelnet
@@ -410,8 +411,9 @@ if exists('*job_start')
 
 	func! GenerateCtagAsync()
 		if !g:is_generating_ctags
-			let l:command = "ctags -f " . g:g4_project_root. "/tags " . 
-						\"--exclude *.html --exclude *.h --exclude *.cpp --exclude *.bat --exclude *.xml --exclude *.txt -R " . g:g4_project_root
+			let cwd = '.'
+			let l:command = "ctags -f .\\tags " . 
+						\"--exclude *.html --exclude *.h --exclude *.cpp --exclude *.bat --exclude *.xml --exclude *.txt -R ."
 			echom '[ctags] ------------------- Start to generate ctags for project ------------------------'
 			let l:channel = job_start(l:command, {"callback" : "CtagGenerationCallback", "close_cb" : "CtagCloseHandler"})
 			if ch_status(l:channel) == "open"
@@ -425,8 +427,8 @@ if exists('*job_start')
 	endf
 	nnoremap <F4> :call GenerateCtagAsync()<CR>
 else
-	nnoremap <expr> <F4> ':silent! !ctags -f ' . g:g4_project_root. '\tags '. '--exclude *.html --exclude *.h --exclude *.cpp 
-	\--exclude *.bat --exclude *.xml --exclude *.txt -R ' . g:g4_project_root. "\<CR>"
+	nnoremap <expr> <F4> ':silent! !ctags -f .\tags '. '--exclude *.html --exclude *.h --exclude *.cpp 
+	\--exclude *.bat --exclude *.xml --exclude *.txt -R .' . "\<CR>"
 endif
 "G4 routine end
 
