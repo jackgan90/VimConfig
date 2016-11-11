@@ -220,20 +220,18 @@ colorscheme molokai
 "Per plugin configuration start
 "YCm
 let g:ycm_autoclose_preview_window_after_completion=1
-"SimpylFold
-let g:SimpylFold_docstring_preview=1
 "NerdTree
 let NERDTreeIgnore=['\.pyc$', '\~$', '\.cache$', '\.exe$', '\.dll$', '\.sfx$', '\.gim$', '\.gis$', '\.jpg$', '\.png$', '\.fla$', '\.swf$', '\.bmp$', '\.map$', '\.scn$', '\.scnex$', '\.tga$', '\.mtg$', '\.ags$', '\.ktx$', '\.mesh$', '\.pvr$', '\.pvr2$', '\.dds$', '\.mtl$', '\.rar$', '\.ttf$', '\.gif$', '\.mp3$', '\.wav$', '\.fsb$', '\.fev$', '\.m4a$'] "ignore files in NERDTree
 let g:nerdtree_tabs_open_on_console_startup=1       "automatically open nerdtree tab on startup
 "ctrlp
 let g:ctrlp_max_files = 0
-let g:minBufExplForceSyntaxEnable = 1
 let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
 "rg
 "let g:ackprg = 'ag --nogroup --nocolor --column'
 if executable('rg')
 	"Use ag in Ctrlp for listing files
-	let g:ctrlp_user_command='rg --files %s --color never'
+	"let g:ctrlp_user_command='rg --files %s --color never'
+	let g:ctrlp_user_command='ag %s -l --nocolor -g ""'
 	"ag is fast enough that Ctrlp doesn't need to cache
 	let g:ctrlp_use_caching = 1
 endif
