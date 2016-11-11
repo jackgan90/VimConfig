@@ -43,8 +43,6 @@ call vundle#begin()
 
 Plugin 'VundleVim/Vundle.vim'
 
-"Plugin 'tmhedberg/SimpylFold'
-
 "Plugin 'vim-scripts/indentpython.vim'
 "code completion
 Bundle 'Valloric/YouCompleteMe'
@@ -79,7 +77,7 @@ Plugin 'FelikZ/ctrlp-py-matcher'
 
 "for window swapping
 "Plugin 'wesQ3/vim-windowswap'
-Plugin 'beyondmarc/glsl.vim'
+"Plugin 'beyondmarc/glsl.vim'
 "Plugin 'fugalh/desert.vim'
 Plugin 'tomasr/molokai'
 "Plugin 'juneedahamed/svnj.vim'
@@ -242,6 +240,7 @@ endif
 "windows swapping
 "let g:windowswap_map_keys = 0 "prevent default bindings
 "Per plugin configuration end
+let g:syntastic_python_checkers = ["pyflakes"]
 
 syntax on
 
@@ -387,6 +386,7 @@ command! LocalExportTable execute('silent! !cd ' . g:g4_project_root.  '\client\
 command! ModelEditor execute('silent! !start /B ' . g:g4_project_root. '\..\outsource\neox\tool_new\modeleditor.exe')
 command! FxEditor execute('silent! !start /B ' . g:g4_project_root.  '\..\outsource\neox\tool_new\FxEdit.exe')
 command! SceneEditor execute('silent! !start /B ' . g:g4_project_root.  '\..\outsource\neox\tool_new\sceneeditor.exe')
+command! Ipython execute('silent! !start ipython')
 ca gm ClientGM
 ca conclient ReInitClientTelnet
 ca reloads ReloadServer
@@ -398,11 +398,12 @@ ca servers AllServer
 ca kills KillServers
 ca restartbattle RestartBattle
 ca killc StopClient
+ca ipython Ipython
 "search map
-nnoremap <expr> <leader>ft ':GrepperRg -tpy -w  ' . g:g4_project_root. '\<C-Left><Left>'
-nnoremap <expr> <leader>fc ':GrepperRg -tpy -w  ' . g:g4_project_root. '\client\script\<C-Left><Left>'
-nnoremap <expr> <leader>fs ':GrepperRg -tpy -w  ' . g:g4_project_root. '\server\<C-Left><Left>'
-nnoremap <expr> <leader>fa ':GrepperRg -w  ' . g:g4_project_root. '\client\res\ui\as3\<C-Left><Left>'
+nnoremap <expr> <leader>ft ':GrepperAg -python -w  ' . g:g4_project_root. '\<C-Left><Left>'
+nnoremap <expr> <leader>fc ':GrepperAg -python -w  ' . g:g4_project_root. '\client\script\<C-Left><Left>'
+nnoremap <expr> <leader>fs ':GrepperAg -python -w  ' . g:g4_project_root. '\server\<C-Left><Left>'
+nnoremap <expr> <leader>fa ':GrepperAg -w  ' . g:g4_project_root. '\client\res\ui\as3\<C-Left><Left>'
 
 let g:is_generating_ctags = 0
 if exists('*job_start')
