@@ -237,8 +237,16 @@ if executable('rg')
 endif
 "windows swapping
 "let g:windowswap_map_keys = 0 "prevent default bindings
-"Per plugin configuration end
 let g:syntastic_python_checkers = ["pyflakes"]
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
+"Per plugin configuration end
 
 syntax on
 
