@@ -228,7 +228,7 @@ let g:ctrlp_max_files = 0
 let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
 "rg
 "let g:ackprg = 'ag --nogroup --nocolor --column'
-if executable('rg')
+if executable('ag')
 	"Use ag in Ctrlp for listing files
 	"let g:ctrlp_user_command='rg --files %s --color never'
 	let g:ctrlp_user_command='ag %s -l --nocolor -g ""'
