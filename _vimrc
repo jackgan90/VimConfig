@@ -96,6 +96,7 @@ let mapleader = ','
 autocmd FileType python setlocal noexpandtab tabstop=4 softtabstop=4 shiftwidth=4 autoindent
 au BufNewFile *.py call setline(1, '# -*- coding: utf-8 -*-')
 au BufRead,BufNewFile *.as set filetype=javascript
+"set tags=./tags;,tags
 
 "helper functions
 function! IsBlankLine(lineNum)
@@ -220,20 +221,24 @@ colorscheme molokai
 "Per plugin configuration start
 "YCm
 let g:ycm_autoclose_preview_window_after_completion=1
+let g:ycm_collect_identifiers_from_comments_and_strings = 1
+let g:ycm_collect_identifiers_from_tags_files = 1
 "NerdTree
 let NERDTreeIgnore=['\.pyc$', '\~$', '\.cache$', '\.exe$', '\.dll$', '\.sfx$', '\.gim$', '\.gis$', '\.jpg$', '\.png$', '\.fla$', '\.swf$', '\.bmp$', '\.map$', '\.scn$', '\.scnex$', '\.tga$', '\.mtg$', '\.ags$', '\.ktx$', '\.mesh$', '\.pvr$', '\.pvr2$', '\.dds$', '\.mtl$', '\.rar$', '\.ttf$', '\.gif$', '\.mp3$', '\.wav$', '\.fsb$', '\.fev$', '\.m4a$'] "ignore files in NERDTree
 let g:nerdtree_tabs_open_on_console_startup=1       "automatically open nerdtree tab on startup
 "ctrlp
 let g:ctrlp_max_files = 0
 let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
+let g:ctrlp_use_caching = 1
 "rg
 "let g:ackprg = 'ag --nogroup --nocolor --column'
-if executable('ag')
+if executable('rg')
 	"Use ag in Ctrlp for listing files
-	"let g:ctrlp_user_command='rg --files %s --color never'
+	set grepprg=rg\ --color=never
+	let g:ctrlp_user_command = "rg -F %s --files --color=never"
+elseif executable('ag')
+	set grepprg=ag\ --nogroup\ --nocolor
 	let g:ctrlp_user_command='ag %s -l --nocolor -g ""'
-	"ag is fast enough that Ctrlp doesn't need to cache
-	let g:ctrlp_use_caching = 1
 endif
 "windows swapping
 "let g:windowswap_map_keys = 0 "prevent default bindings
@@ -244,8 +249,8 @@ set statusline+=%*
 
 let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 0
+"let g:syntastic_check_on_open = 1
+"let g:syntastic_check_on_wq = 0
 "Per plugin configuration end
 
 syntax on
@@ -406,10 +411,10 @@ ca restartbattle RestartBattle
 ca killc StopClient
 ca ipython Ipython
 "search map
-nnoremap <expr> <leader>ft ':GrepperAg -python -w  ' . g:g4_project_root. '\<C-Left><Left>'
-nnoremap <expr> <leader>fc ':GrepperAg -python -w  ' . g:g4_project_root. '\client\script\<C-Left><Left>'
-nnoremap <expr> <leader>fs ':GrepperAg -python -w  ' . g:g4_project_root. '\server\<C-Left><Left>'
-nnoremap <expr> <leader>fa ':GrepperAg -w  ' . g:g4_project_root. '\client\res\ui\as3\<C-Left><Left>'
+nnoremap <expr> <leader>ft ':GrepperRg -t py -w  ' . g:g4_project_root. '\<C-Left><Left>'
+nnoremap <expr> <leader>fc ':GrepperRg -t py -w  ' . g:g4_project_root. '\client\script\<C-Left><Left>'
+nnoremap <expr> <leader>fs ':GrepperRg -t py -w  ' . g:g4_project_root. '\server\<C-Left><Left>'
+nnoremap <expr> <leader>fa ':GrepperRg -w  ' . g:g4_project_root. '\client\res\ui\as3\<C-Left><Left>'
 
 let g:is_generating_ctags = 0
 if exists('*job_start')
@@ -426,7 +431,7 @@ if exists('*job_start')
 		if !g:is_generating_ctags
 			let cwd = '.'
 			let l:command = "ctags -f .\\tags " . 
-						\"--exclude *.html --exclude *.h --exclude *.cpp --exclude *.bat --exclude *.xml --exclude *.txt -R ."
+						\"--fields=+l --exclude *.html --exclude *.h --exclude *.cpp --exclude *.bat --exclude *.xml --exclude *.txt -R ."
 			echom '[ctags] ------------------- Start to generate ctags for project ------------------------'
 			let l:channel = job_start(l:command, {"callback" : "CtagGenerationCallback", "close_cb" : "CtagCloseHandler"})
 			if ch_status(l:channel) == "open"
@@ -440,7 +445,7 @@ if exists('*job_start')
 	endf
 	nnoremap <F4> :call GenerateCtagAsync()<CR>
 else
-	nnoremap <expr> <F4> ':silent! !ctags -f .\tags '. '--exclude *.html --exclude *.h --exclude *.cpp 
+	nnoremap <expr> <F4> ':silent! !ctags -f .\tags '. '--fields=+l --exclude *.html --exclude *.h --exclude *.cpp 
 	\--exclude *.bat --exclude *.xml --exclude *.txt -R .' . "\<CR>"
 endif
 "G4 routine end
