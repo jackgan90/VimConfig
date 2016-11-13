@@ -44,8 +44,6 @@ call vundle#begin()
 Plugin 'VundleVim/Vundle.vim'
 
 "Plugin 'vim-scripts/indentpython.vim'
-"code completion
-Bundle 'Valloric/YouCompleteMe'
 "syntastic check
 Plugin 'scrooloose/syntastic'
 "theme
@@ -90,6 +88,8 @@ Plugin 'easymotion/vim-easymotion'
 Plugin 'haya14busa/incsearch.vim'
 Plugin 'haya14busa/incsearch-fuzzy.vim'
 Plugin 'haya14busa/incsearch-easymotion.vim'
+"code completion
+Plugin 'Valloric/YouCompleteMe'
 call vundle#end()
 
 let mapleader = ','
