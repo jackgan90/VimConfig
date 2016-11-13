@@ -415,6 +415,7 @@ nnoremap <expr> <leader>ft ':GrepperRg -t py -w  ' . g:g4_project_root. '\<C-Lef
 nnoremap <expr> <leader>fc ':GrepperRg -t py -w  ' . g:g4_project_root. '\client\script\<C-Left><Left>'
 nnoremap <expr> <leader>fs ':GrepperRg -t py -w  ' . g:g4_project_root. '\server\<C-Left><Left>'
 nnoremap <expr> <leader>fa ':GrepperRg -w  ' . g:g4_project_root. '\client\res\ui\as3\<C-Left><Left>'
+nnoremap <leader>ff :GrepperRg 
 
 let g:is_generating_ctags = 0
 if exists('*job_start')
