@@ -49,7 +49,7 @@ Plugin 'scrooloose/syntastic'
 "theme
 "Plugin 'jnurmine/Zenburn'
 "theme
-"Plugin 'altercation/vim-colors-solarized'
+Plugin 'altercation/vim-colors-solarized'
 "directory management
 Plugin 'scrooloose/nerdtree'
 "nerdtree tabs
@@ -77,7 +77,7 @@ Plugin 'FelikZ/ctrlp-py-matcher'
 "Plugin 'wesQ3/vim-windowswap'
 "Plugin 'beyondmarc/glsl.vim'
 "Plugin 'fugalh/desert.vim'
-Plugin 'tomasr/molokai'
+"Plugin 'tomasr/molokai'
 "Plugin 'juneedahamed/svnj.vim'
 "Plugin 'powerline/powerline'
 Plugin 'itchyny/lightline.vim'
@@ -90,6 +90,8 @@ Plugin 'haya14busa/incsearch-fuzzy.vim'
 Plugin 'haya14busa/incsearch-easymotion.vim'
 "code completion
 Plugin 'Valloric/YouCompleteMe'
+Plugin 'SirVer/ultisnips'
+Plugin 'honza/vim-snippets'
 call vundle#end()
 
 let mapleader = ','
@@ -216,13 +218,20 @@ source $VIMRUNTIME/menu.vim
 
 "scheme
 set background=dark
-colorscheme molokai
+colorscheme solarized
 
 "Per plugin configuration start
 "YCm
 let g:ycm_autoclose_preview_window_after_completion=1
 let g:ycm_collect_identifiers_from_comments_and_strings = 1
 let g:ycm_collect_identifiers_from_tags_files = 1
+"UltiSnips
+let g:UltiSnipsExpandTrigger = '<c-j>'
+if has('win32') || has('win64')
+	let g:UltiSnipsSnippetDirectories=[expand('$USERPROFILE').'\.vim\UltiSnips']
+else
+	let g:UltiSnipsSnippetDirectories=['~/.vim/UltiSnips']
+endif
 "NerdTree
 let NERDTreeIgnore=['\.pyc$', '\~$', '\.cache$', '\.exe$', '\.dll$', '\.sfx$', '\.gim$', '\.gis$', '\.jpg$', '\.png$', '\.fla$', '\.swf$', '\.bmp$', '\.map$', '\.scn$', '\.scnex$', '\.tga$', '\.mtg$', '\.ags$', '\.ktx$', '\.mesh$', '\.pvr$', '\.pvr2$', '\.dds$', '\.mtl$', '\.rar$', '\.ttf$', '\.gif$', '\.mp3$', '\.wav$', '\.fsb$', '\.fev$', '\.m4a$'] "ignore files in NERDTree
 let g:nerdtree_tabs_open_on_console_startup=1       "automatically open nerdtree tab on startup
