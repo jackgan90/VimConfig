@@ -1,3 +1,70 @@
-snippet pr "print"
-	print "Helo World"
+snippet	pr "print - preceding debug info" b
+print '-' * 30, '`!p snip.rv = fn``!v ':' . line('.')`', $0
 endsnippet
+
+snippet cl "python class definition" b
+class ${1:NewClass}(${0:object}):
+	def __init__(self):
+		super($1, self).__init__(self)
+endsnippet
+
+snippet sta "print call stack" b
+try:
+	print '-' * 30
+	import inspect
+	for frame in inspect.stack():
+		print '%s: %d, %s'%(frame[1], frame[2], frame[3])
+	print '-' * 30
+except:
+	print 'can\'t printStackInfo'
+endsnippet
+
+# G4 snippet start
+snippet buff "G4 general BuffComp definition template" b
+import entities.components.BuffComp as BuffComp
+
+class BuffComp_${1:Common}(BuffComp.BuffComp):
+	def __init__(self):
+		super(BuffComp_$1, self).__init__()
+
+	def start(self):
+		super(BuffComp_$1, self).start()
+		self.check_interval = ${2:500} 
+
+	def update(self):
+		super(BuffComp_$1, self).update()
+		self.enabled = False
+
+	def _doUpdate(self):
+		pass
+
+	def _doInitEntityState(self):
+		pass
+
+	def _doRestoreEntityState(self):
+		pass
+endsnippet
+
+snippet awsk "G4 general awskill template" b
+import entities.components.AwSkill as AwSkill
+
+class AwSkill_${1:SkillId}(AwSkill.AwSkill):
+	def __init__(self, comp, skillId, rank, comprehension):
+		super(AwSkill_$1, self).__init__(comp, skillId, rank, comprehension)
+
+	def _effectStart(self):
+		super(AwSkill_$1, self)._effectStart()
+
+	def _extraEffectStart(self):
+		super(AwSkill_$1, self)._extraEffectStart()
+
+	def _beforeDestroy(self):
+		super(AwSkill_$1, self)._beforeDestroy()
+
+endsnippet
+
+snippet impd "import cdata " b
+import com.data.cdata.$1 as DATA_$2
+endsnippet
+
+# G4 snippet end

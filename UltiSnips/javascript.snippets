@@ -1,0 +1,21 @@
+snippet func "Javascript/actionscript function" b
+function ${1:func_name}($2){
+	$0
+}
+endsnippet
+
+snippet for "Javascript/actionscript for loop" b
+for($1; $2; $3){
+	$0
+}
+endsnippet
+
+snippet fori "Javascript/actionscript for var i loop" b
+for(var i = 0; i < $1.length; i++){
+	$0
+}
+endsnippet
+
+snippet tra "actionscript trace debug" b
+trace('-----------------------------------------$0`!p snip.rv = fn``!v ':' . line('.')`')
+endsnippet

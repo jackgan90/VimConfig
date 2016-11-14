@@ -92,6 +92,7 @@ Plugin 'haya14busa/incsearch-easymotion.vim'
 Plugin 'Valloric/YouCompleteMe'
 Plugin 'SirVer/ultisnips'
 Plugin 'honza/vim-snippets'
+Plugin 'skywind3000/asyncrun.vim'
 call vundle#end()
 
 let mapleader = ','
