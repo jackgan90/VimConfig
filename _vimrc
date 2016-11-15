@@ -55,7 +55,7 @@ Plugin 'scrooloose/nerdtree'
 "nerdtree tabs
 Plugin 'jistr/vim-nerdtree-tabs'
 "file navigation
-Plugin 'kien/ctrlp.vim'
+Plugin 'ctrlpvim/ctrlp.vim'
 
 "Plugin 'rking/ag.vim'
 Plugin 'mhinz/vim-grepper'
@@ -136,6 +136,9 @@ nnoremap <C-J> <C-W><C-J>
 nnoremap <C-K> <C-W><C-K>
 nnoremap <C-L> <C-W><C-L>
 nnoremap <C-H> <C-W><C-H>
+"next tag, previous tag
+nnoremap <leader>] :tn<CR>
+nnoremap <leader>[ :tp<CR>
 "cancel highlight when esc pressed 
 nnoremap <ESC> :nohl<CR>
 "window swapping mapping
@@ -258,7 +261,7 @@ set statusline+=%{SyntasticStatuslineFlag()}
 set statusline+=%*
 
 let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1
+"let g:syntastic_auto_loc_list = 1
 "let g:syntastic_check_on_open = 1
 "let g:syntastic_check_on_wq = 0
 "Per plugin configuration end
@@ -295,8 +298,8 @@ def get_client_count():
 	return count
 
 def connect_to_client(callback=None):
+	global telnetClients
 	def do_connect():
-		global telnetClients
 		clientCount = get_client_count()
 		for i in xrange(clientCount):
 			port =DEFAULT_TELNET_PORT + i
@@ -442,7 +445,7 @@ if exists('*job_start')
 		if !g:is_generating_ctags
 			let cwd = '.'
 			let l:command = "ctags -f .\\tags " . 
-						\"--fields=+l --exclude *.html --exclude *.h --exclude *.cpp --exclude *.bat --exclude *.xml --exclude *.txt -R ."
+						\"--fields=+lS --exclude *.html --exclude *.h --exclude *.cpp --exclude *.bat --exclude *.xml --exclude *.txt -R ."
 			echom '[ctags] ------------------- Start to generate ctags for project ------------------------'
 			let l:channel = job_start(l:command, {"callback" : "CtagGenerationCallback", "close_cb" : "CtagCloseHandler"})
 			if ch_status(l:channel) == "open"
@@ -456,7 +459,7 @@ if exists('*job_start')
 	endf
 	nnoremap <F4> :call GenerateCtagAsync()<CR>
 else
-	nnoremap <expr> <F4> ':silent! !ctags -f .\tags '. '--fields=+l --exclude *.html --exclude *.h --exclude *.cpp 
+	nnoremap <expr> <F4> ':silent! !ctags -f .\tags '. '--fields=+lS --exclude *.html --exclude *.h --exclude *.cpp 
 	\--exclude *.bat --exclude *.xml --exclude *.txt -R .' . "\<CR>"
 endif
 "G4 routine end
@@ -612,4 +615,3 @@ func! Before_vc_setline(start, lines)
 	endif
 	return s:convlines
 endf
-
