@@ -82,17 +82,19 @@ Plugin 'FelikZ/ctrlp-py-matcher'
 "Plugin 'powerline/powerline'
 Plugin 'itchyny/lightline.vim'
 Plugin 'juneedahamed/vc.vim'
-Plugin 'tpope/vim-surround'
-Plugin 'tpope/vim-repeat'
-Plugin 'easymotion/vim-easymotion'
-Plugin 'haya14busa/incsearch.vim'
-Plugin 'haya14busa/incsearch-fuzzy.vim'
-Plugin 'haya14busa/incsearch-easymotion.vim'
+"Plugin 'tpope/vim-surround'
+"Plugin 'tpope/vim-repeat'
+"Plugin 'easymotion/vim-easymotion'
+"Plugin 'haya14busa/incsearch.vim'
+"Plugin 'haya14busa/incsearch-fuzzy.vim'
+"Plugin 'haya14busa/incsearch-easymotion.vim'
 "code completion
 Plugin 'Valloric/YouCompleteMe'
 Plugin 'SirVer/ultisnips'
 Plugin 'honza/vim-snippets'
-Plugin 'skywind3000/asyncrun.vim'
+"Plugin 'skywind3000/asyncrun.vim'
+Plugin 'nathanaelkane/vim-indent-guides'
+"Plugin 'dyng/ctrlsf.vim'
 call vundle#end()
 
 let mapleader = ','
@@ -155,21 +157,23 @@ nnoremap <leader>2 :vertical resize -20<CR>
 nnoremap <leader>3 :resize +20<CR>
 nnoremap <leader>4 :resize -20<CR>
 "NerdTree toggle
-nnoremap <leader>n :NERDTreeTabsToggle <CR>
+nnoremap <leader>n :NERDTreeTabsToggle<CR>
 "Python delete whole function
 onoremap pf :call FindPythonFunctionUnderCursor()<CR>
 onoremap pc :call FindPythonClassUnderCursor()<CR>
 nnoremap <leader>F :call GotoNextPythonFunction()<CR>
 nnoremap <F5> :!python %<CR>
 "For easymotion and incsearch
-let g:EasyMotion_smartcase = 1
-map <Leader> <Plug>(easymotion-prefix)
-map /  <Plug>(incsearch-forward)
-map ?  <Plug>(incsearch-backward)
-map g/ <Plug>(incsearch-stay)
-map z/ <Plug>(incsearch-easymotion-/)
-map z? <Plug>(incsearch-easymotion-?)
-map zg/ <Plug>(incsearch-easymotion-stay)
+"let g:EasyMotion_smartcase = 1
+"map <Leader> <Plug>(easymotion-prefix)
+"map /  <Plug>(incsearch-forward)
+"map ?  <Plug>(incsearch-backward)
+"map g/ <Plug>(incsearch-stay)
+"map z/ <Plug>(incsearch-easymotion-/)
+"map z? <Plug>(incsearch-easymotion-?)
+"map zg/ <Plug>(incsearch-easymotion-stay)
+"for indent guides
+nnoremap <leader>gd :IndentGuidesToggle<CR>
 " incsearch.vim x fuzzy x vim-easymotion
 
 function! s:config_easyfuzzymotion(...) abort
@@ -244,7 +248,6 @@ let g:ctrlp_max_files = 0
 let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
 let g:ctrlp_use_caching = 1
 "rg
-"let g:ackprg = 'ag --nogroup --nocolor --column'
 if executable('rg')
 	"Use ag in Ctrlp for listing files
 	set grepprg=rg\ --color=never
@@ -264,9 +267,139 @@ let g:syntastic_always_populate_loc_list = 1
 "let g:syntastic_auto_loc_list = 1
 "let g:syntastic_check_on_open = 1
 "let g:syntastic_check_on_wq = 0
+
+"This function is for vc.vim,forcing it to convert line from chinese encoding to
+"utf-8 encoding
+func! Before_vc_setline(start, lines)
+	let s:convlines = []
+	if type(a:lines) == type([])
+		for idx in range(0, len(a:lines) - 1)
+			call add(s:convlines, iconv(a:lines[idx], 'chinese', 'utf-8'))
+		endfor
+	else
+		let s:convlines = iconv(a:lines, 'chinese', 'utf-8')
+	endif
+	return s:convlines
+endf
+"fast rg
+nnoremap <leader>ff :GrepperRg 
+"CtrlSF
+"nnoremap <leader>fsf :CtrlSF 
+"let g:ctrlsf_ackprg = 'rg'
 "Per plugin configuration end
 
 syntax on
+
+function! FindNextBlankLineOrViceVersa(startLine, findBlank)
+	let maxLine = line('$')
+	let currentLine = a:startLine + 1
+	while currentLine <= maxLine
+		if a:findBlank && IsBlankLine(currentLine)
+			return currentLine
+		endif
+		if !a:findBlank && !IsBlankLine(currentLine)
+			return currentLine
+		endif
+		let currentLine += 1
+	endwhile
+	return -1
+endfunction
+
+function! FindPythonDecoratorStartLine(initialLine)
+	let decoratorStartLine = a:initialLine
+	let initialIndent = indent(a:initialLine)
+	let curLine = decoratorStartLine - 1
+	while curLine >= 1
+		let lineText = getline(curLine) 
+		if lineText !~# '\v\S'	"blank line,should go up to check decorator
+			let curLine -= 1
+		elseif indent(curLine) != initialIndent
+			break
+		elseif lineText !~# '\v.*\@\S+'
+			break
+		else 
+			let decoratorStartLine = curLine
+			let curLine -= 1
+		endif
+	endwhile
+	return decoratorStartLine
+endfunction
+
+function! RecognizePythonStructure(startLine)
+	let startIndent = indent(a:startLine)
+	let endLine = a:startLine + 1
+	let maxLine = line('$')
+	let maxFuncNonBlankLine = a:startLine
+	if endLine > maxLine
+		return maxLine
+	endif
+	while endLine <= maxLine
+		let isBlank = IsBlankLine(endLine)
+		if !isBlank && indent(endLine) <= startIndent
+			let endLine = maxFuncNonBlankLine
+			break
+		else
+			if !isBlank
+				let maxFuncNonBlankLine = endLine
+			endif
+			let endLine += 1
+		endif
+	endwhile
+	return endLine
+endfunction
+
+function! GotoNextPythonFunction()
+		let pattern = '\v.*def\s*\S*\(.*\)\s*:'
+		let cmd = "silent! normal! /". pattern. "\<CR>l" 
+		execute cmd
+endfunction
+
+function! FindPySignatureByFoldLevel(keyword)
+	let originalFoldLv = foldlevel(line('.'))
+	let originalLine = line('.')
+	let cachedZ = @z
+	while 1
+		let pattern = '\v.*'. a:keyword .'\s*\S*\(.*\)\s*:'
+		let cmd = "silent! normal! mz?". pattern. "\<CR>" 
+		execute cmd
+		let curLine = line('.')
+		if curLine > originalLine
+			execute 'normal! `z'
+			break
+		endif
+		if getline(curLine) !~# pattern
+			break
+		endif
+		if foldlevel(curLine) <= originalFoldLv
+			break
+		endif
+	endwhile
+	let @z = cachedZ
+endfunction
+
+function! FindPythonLaxeme(endInVisualMode, keyword)
+	call FindPySignatureByFoldLevel(a:keyword)
+	"resolve for decorator
+	let startLine = line('.')
+	let decoratorStartLine = FindPythonDecoratorStartLine(startLine)
+	if !a:endInVisualMode
+		return
+	endif
+	let curLine = RecognizePythonStructure(startLine)
+	let repeatJump = curLine - decoratorStartLine
+	execute 'silent! normal! '.decoratorStartLine. 'GV' . repeatJump . 'j'
+endfunction
+
+
+function! FindPythonFunctionUnderCursor()
+	execute 'silent! normal! $'
+	call FindPythonLaxeme(1, 'def')
+endfunction
+
+function! FindPythonClassUnderCursor()
+	execute 'silent! normal! $'
+	call FindPythonLaxeme(1, 'class')
+endfunction
 
 "G4 routine start
 let g:g4_project_root='f:\trunk'
@@ -388,48 +521,6 @@ EOF
 	endif
 endfunction
 
-au BufWrite *.py call G4ReloadCurrentFile()
-command! -nargs=? ClientGM python execute_client_gm(<f-args>)
-command! ClientGMReload python execute_client_gm('reload')
-command! BattleGMReload python execute_client_gm('reload battle')
-command! ReInitClientTelnet python reinit_client_telnet()
-command! ReloadCurrentFile python reload_current_file()
-command! ReloadServer execute('!start /B '. g:g4_project_root . '\server\ServerLauncher\reload.bat')
-command! StartServer execute('!start /B cd '. g:g4_project_root . '\server\ServerLauncher && start.bat')
-command! StartBattle execute('!start /B cd '. g:g4_project_root . '\server\ServerLauncher && battle.bat')
-command! -nargs=? StartClient python launch_client(<f-args>)
-command! AllServer execute('!start /B cd '. g:g4_project_root . '\server\ServerLauncher && start.bat && battle.bat')
-command! KillServers execute('!start /B cd ' . g:g4_project_root . '\server\ServerLauncher && kill.bat')
-command! RestartBattle execute('!start /B cd ' . g:g4_project_root . '\server\ServerLauncher && killbattle.bat && battle.bat')
-command! StopClient python stop_client()
-command! -nargs=* RunServerScript execute('!start /B cd '. g:g4_project_root . '\server\ServerLauncher && '.<q-args>)
-command! UpTrunk execute('silent! !svn up ' . g:g4_project_root)
-command! UpDesign execute('silent! !svn up ' . g:g4_project_root. '\..\design')
-command! UpOutsource execute('silent! !svn up ' . g:g4_project_root. '\..\outsource')
-command! LocalExportTable execute('silent! !cd ' . g:g4_project_root.  '\client\tools\export_table_tool_new && export_use_addedFiles')
-command! ModelEditor execute('silent! !start /B ' . g:g4_project_root. '\..\outsource\neox\tool_new\modeleditor.exe')
-command! FxEditor execute('silent! !start /B ' . g:g4_project_root.  '\..\outsource\neox\tool_new\FxEdit.exe')
-command! SceneEditor execute('silent! !start /B ' . g:g4_project_root.  '\..\outsource\neox\tool_new\sceneeditor.exe')
-command! Ipython execute('silent! !start ipython')
-ca gm ClientGM
-ca conclient ReInitClientTelnet
-ca reloads ReloadServer
-ca reloadb BattleGMReload
-ca reload ClientGMReload
-ca battle StartBattle
-ca client StartClient
-ca servers AllServer
-ca kills KillServers
-ca restartbattle RestartBattle
-ca killc StopClient
-ca ipython Ipython
-"search map
-nnoremap <expr> <leader>ft ':GrepperRg -t py -w  ' . g:g4_project_root. '\<C-Left><Left>'
-nnoremap <expr> <leader>fc ':GrepperRg -t py -w  ' . g:g4_project_root. '\client\script\<C-Left><Left>'
-nnoremap <expr> <leader>fs ':GrepperRg -t py -w  ' . g:g4_project_root. '\server\<C-Left><Left>'
-nnoremap <expr> <leader>fa ':GrepperRg -w  ' . g:g4_project_root. '\client\res\ui\as3\<C-Left><Left>'
-nnoremap <leader>ff :GrepperRg 
-
 let g:is_generating_ctags = 0
 if exists('*job_start')
 	func! CtagGenerationCallback(channel, msg)
@@ -462,156 +553,48 @@ else
 	nnoremap <expr> <F4> ':silent! !ctags -f .\tags '. '--fields=+lS --exclude *.html --exclude *.h --exclude *.cpp 
 	\--exclude *.bat --exclude *.xml --exclude *.txt -R .' . "\<CR>"
 endif
-"G4 routine end
 
-
-function! FindNextBlankLineOrViceVersa(startLine, findBlank)
-	let maxLine = line('$')
-	let currentLine = a:startLine + 1
-	while currentLine <= maxLine
-		if a:findBlank && IsBlankLine(currentLine)
-			return currentLine
-		endif
-		if !a:findBlank && !IsBlankLine(currentLine)
-			return currentLine
-		endif
-		let currentLine += 1
-	endwhile
-	return -1
-endfunction
-
-function! FindPythonDecoratorStartLine(initialLine)
-	let decoratorStartLine = a:initialLine
-	let initialIndent = indent(a:initialLine)
-	let curLine = decoratorStartLine - 1
-	while curLine >= 1
-		let lineText = getline(curLine) 
-		if lineText !~# '\v\S'	"blank line,should go up to check decorator
-			let curLine -= 1
-		elseif indent(curLine) != initialIndent
-			break
-		elseif lineText !~# '\v.*\@\S+'
-			break
-		else 
-			let decoratorStartLine = curLine
-			let curLine -= 1
-		endif
-	endwhile
-	return decoratorStartLine
-endfunction
-
-function! RecognizePythonStructure(startLine)
-	let startIndent = indent(a:startLine)
-	let endLine = a:startLine + 1
-	let maxLine = line('$')
-	let maxFuncNonBlankLine = a:startLine
-	if endLine > maxLine
-		return maxLine
-	endif
-	while endLine <= maxLine
-		let isBlank = IsBlankLine(endLine)
-		if !isBlank && indent(endLine) <= startIndent
-			let endLine = maxFuncNonBlankLine
-			break
-		else
-			if !isBlank
-				let maxFuncNonBlankLine = endLine
-			endif
-			let endLine += 1
-		endif
-	endwhile
-	return endLine
-endfunction
-
-function! GotoNextPythonFunction()
-		let pattern = '\v.*def\s*\S*\(.*\)\s*:'
-		let cmd = "silent! normal! /". pattern. "\<CR>l" 
-		execute cmd
-endfunction
-
-
-"this method is highly rely on SimpylFold's fold method
-function! FindPySignatureByFoldLevel(keyword)
-	let originalFoldLv = foldlevel(line('.'))
-	let originalLine = line('.')
-	let cachedZ = @z
-	while 1
-		let pattern = '\v.*'. a:keyword .'\s*\S*\(.*\)\s*:'
-		let cmd = "silent! normal! mz?". pattern. "\<CR>" 
-		execute cmd
-		let curLine = line('.')
-		if curLine > originalLine
-			execute 'normal! `z'
-			break
-		endif
-		if getline(curLine) !~# pattern
-			break
-		endif
-		if foldlevel(curLine) <= originalFoldLv
-			break
-		endif
-	endwhile
-	let @z = cachedZ
-endfunction
-
-function! FindPythonLaxeme(endInVisualMode, keyword)
-	call FindPySignatureByFoldLevel(a:keyword)
-	"resolve for decorator
-	let startLine = line('.')
-	let decoratorStartLine = FindPythonDecoratorStartLine(startLine)
-	if !a:endInVisualMode
-		return
-	endif
-	let curLine = RecognizePythonStructure(startLine)
-	let repeatJump = curLine - decoratorStartLine
-	execute 'silent! normal! '.decoratorStartLine. 'GV' . repeatJump . 'j'
-endfunction
-
-
-function! FindPythonFunctionUnderCursor()
-	execute 'silent! normal! $'
-	call FindPythonLaxeme(1, 'def')
-endfunction
-
-function! FindPythonClassUnderCursor()
-	execute 'silent! normal! $'
-	call FindPythonLaxeme(1, 'class')
-endfunction
-
-function! InsertPythonProfileStart()
-	execute "silent! normal! j"
-	execute "silent! normal! Iimport cProfile\<CR>"
-	execute "silent! normal! Ipr = cProfile.Profile()\<CR>"
-	execute "silent! normal! Ipr.enable()\<CR>"
-endfunction
-
-function! InsertPythonProfileEnd()
-	execute "silent! normal! j"
-	execute "silent! normal! Ipr.disable()\<CR>"
-	execute "silent! normal! Ioutfile=r'" . g:g4_project_root. "\\profresult'\<CR>"
-	execute "silent! normal! Is = open(outfile, 'wb')\<CR>"
-	execute "silent! normal! Isortby = 'cumulative'\<CR>"
-	execute "silent! normal! Iimport pstats\<CR>"
-	execute "silent! normal! Ips = pstats.Stats(pr, stream=s).sort_stats(sortby)\<CR>"
-	execute "silent! normal! Ips.dump_stats(outfile + '.prof')\<CR>"
-	execute "silent! normal! Ips.print_stats()\<CR>"
-	execute "silent! normal! Is.close()\<CR>"
-endfunction
-
-nnoremap <leader>sp :call InsertPythonProfileStart()\<CR>
-nnoremap <leader>ep :call InsertPythonProfileEnd()\<CR>
+au BufWrite *.py call G4ReloadCurrentFile()
+command! -nargs=? ClientGM python execute_client_gm(<f-args>)
+command! ClientGMReload python execute_client_gm('reload')
+command! BattleGMReload python execute_client_gm('reload battle')
+command! ReInitClientTelnet python reinit_client_telnet()
+command! ReloadCurrentFile python reload_current_file()
+command! ReloadServer execute('!start /B '. g:g4_project_root . '\server\ServerLauncher\reload.bat')
+command! StartServer execute('!start /B cd '. g:g4_project_root . '\server\ServerLauncher && start.bat')
+command! StartBattle execute('!start /B cd '. g:g4_project_root . '\server\ServerLauncher && battle.bat')
+command! -nargs=? StartClient python launch_client(<f-args>)
+command! AllServer execute('!start /B cd '. g:g4_project_root . '\server\ServerLauncher && start.bat && battle.bat')
+command! KillServers execute('!start /B cd ' . g:g4_project_root . '\server\ServerLauncher && kill.bat')
+command! RestartBattle execute('!start /B cd ' . g:g4_project_root . '\server\ServerLauncher && killbattle.bat && battle.bat')
+command! StopClient python stop_client()
+command! -nargs=* RunServerScript execute('!start /B cd '. g:g4_project_root . '\server\ServerLauncher && '.<q-args>)
+command! UpTrunk execute('silent! !svn up ' . g:g4_project_root)
+command! UpDesign execute('silent! !svn up ' . g:g4_project_root. '\..\design')
+command! UpOutsource execute('silent! !svn up ' . g:g4_project_root. '\..\outsource')
+command! LocalExportTable execute('silent! !cd ' . g:g4_project_root.  '\client\tools\export_table_tool_new && export_use_addedFiles')
+command! ModelEditor execute('silent! !start /B ' . g:g4_project_root. '\..\outsource\neox\tool_new\modeleditor.exe')
+command! FxEditor execute('silent! !start /B ' . g:g4_project_root.  '\..\outsource\neox\tool_new\FxEdit.exe')
+command! SceneEditor execute('silent! !start /B ' . g:g4_project_root.  '\..\outsource\neox\tool_new\sceneeditor.exe')
+command! Ipython execute('silent! !start ipython')
+ca gm ClientGM
+ca conclient ReInitClientTelnet
+ca reloads ReloadServer
+ca reloadb BattleGMReload
+ca reload ClientGMReload
+ca battle StartBattle
+ca cl StartClient
+ca sv AllServer
+ca ks KillServers
+ca restartbattle RestartBattle
+ca kc StopClient
+ca ipython Ipython
+"search map
+nnoremap <expr> <leader>ft ':GrepperRg -t py -w  ' . g:g4_project_root. '\<C-Left><Left>'
+nnoremap <expr> <leader>fc ':GrepperRg -t py -w  ' . g:g4_project_root. '\client\script\<C-Left><Left>'
+nnoremap <expr> <leader>fs ':GrepperRg -t py -w  ' . g:g4_project_root. '\server\<C-Left><Left>'
+nnoremap <expr> <leader>fa ':GrepperRg -w  ' . g:g4_project_root. '\client\res\ui\as3\<C-Left><Left>'
 nnoremap <expr> <leader>vp ':silent! !start /B pyprof2calltree -k -i ' . g:g4_project_root .  '/profresult.prof' . "\<CR>"
 
-"This function is for vc.vim,forcing it to convert line from chinese encoding to
-"utf-8 encoding
-func! Before_vc_setline(start, lines)
-	let s:convlines = []
-	if type(a:lines) == type([])
-		for idx in range(0, len(a:lines) - 1)
-			call add(s:convlines, iconv(a:lines[idx], 'chinese', 'utf-8'))
-		endfor
-	else
-		let s:convlines = iconv(a:lines, 'chinese', 'utf-8')
-	endif
-	return s:convlines
-endf
+"G4 routine end
+

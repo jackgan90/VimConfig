@@ -19,6 +19,24 @@ except:
 	print 'can\'t printStackInfo'
 endsnippet
 
+snippet pyps "python profile start code" b
+import cProfile
+pr = cProfile.Profile()
+pr.enable()
+endsnippet
+
+snippet pype "python profile end code" b
+pr.disable()
+outfile = r'`!p snip.rv = vim.eval('g:g4_project_root')`\profresult'
+s = open(outfile, 'wb')
+sortby = 'cumulative'
+import pstats
+ps = pstats.Stats(pr, stream=s).sort_stats(sortby)
+ps.dump_stats(outfile + '.prof')
+ps.print_stats()
+s.close()
+endsnippet
+
 # G4 snippet start
 snippet buff "G4 general BuffComp definition template" b
 import entities.components.BuffComp as BuffComp
@@ -65,6 +83,28 @@ endsnippet
 
 snippet impd "import cdata " b
 import com.data.cdata.$1 as DATA_$2
+endsnippet
+
+snippet newpa "new panel" b
+import ui.UIBase as UIBase
+
+obj = None
+class Panel${1:Name}(UIBase.UIBase):
+	def __init__(self):
+		super(Panel$1, self).__init__('${2:swf}')
+		global obj
+		obj = self
+
+
+	def active(self, val):
+		super(Panel$1, self).active(val)
+		if val:
+			self.setTopMost()
+
+	def updateUI(self):
+		infoDict = dict()
+		self.update_ui(infoDict)
+
 endsnippet
 
 # G4 snippet end
