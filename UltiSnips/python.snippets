@@ -1,3 +1,44 @@
+global !p
+def find_signature(keyword, text):
+	searchResult = re.search('\s*%s\s*(\w+)\s*\(.*\)\s*:' % keyword, text)
+	if searchResult is None:
+		return None
+	return searchResult.group(1)
+
+def find_nearest_class(startLine):
+	className = 'ClassName'
+	totalLines = vim.eval('line("$")')
+	if startLine < 1 or startLine > totalLines:
+		return className
+	else:
+		while startLine >= 1:
+			text = vim.eval('getline(%d)' % startLine)
+			res = find_signature('class', text)
+			if res:
+				return res
+			startLine -= 1
+
+		return className
+
+def extract_parameters(paramStr):
+	tokens = paramStr.split(',')
+	parameters = list(tokens[1:])
+	res = ''
+	for idx, token in enumerate(parameters):
+		res += token
+		if idx == 0:
+			res = res.replace(' ', '')
+		if idx < len(parameters) - 1:
+			res += ','
+	return res
+endglobal
+
+snippet sup "python super method" b
+def ${1:methodname}(self${2}):
+	super(`!p snip.rv = find_nearest_class(int(vim.eval('line(".")')))`, self).$1(`!p snip.rv=extract_parameters(t[2])`)
+	$0
+endsnippet
+
 snippet	pr "print - preceding debug info" b
 print '-' * 30, '`!p snip.rv = fn``!v ':' . line('.')`', $0
 endsnippet
@@ -35,6 +76,13 @@ ps = pstats.Stats(pr, stream=s).sort_stats(sortby)
 ps.dump_stats(outfile + '.prof')
 ps.print_stats()
 s.close()
+endsnippet
+
+snippet ife "python if else statement" b
+if ${1:condition}:
+	${2:pass}
+else:
+	${3:pass}
 endsnippet
 
 # G4 snippet start
@@ -79,10 +127,6 @@ class AwSkill_${1:SkillId}(AwSkill.AwSkill):
 	def _beforeDestroy(self):
 		super(AwSkill_$1, self)._beforeDestroy()
 
-endsnippet
-
-snippet impd "import cdata " b
-import com.data.cdata.$1 as DATA_$2
 endsnippet
 
 snippet newpa "new panel" b

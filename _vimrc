@@ -95,6 +95,8 @@ Plugin 'honza/vim-snippets'
 "Plugin 'skywind3000/asyncrun.vim'
 Plugin 'nathanaelkane/vim-indent-guides'
 "Plugin 'dyng/ctrlsf.vim'
+Plugin 'jiangmiao/auto-pairs'
+Plugin 'ludovicchabant/vim-gutentags'
 call vundle#end()
 
 let mapleader = ','
@@ -286,6 +288,8 @@ nnoremap <leader>ff :GrepperRg
 "CtrlSF
 "nnoremap <leader>fsf :CtrlSF 
 "let g:ctrlsf_ackprg = 'rg'
+nnoremap <C-N> :tn<CR>
+nnoremap <C-M> :tp<CR>
 "Per plugin configuration end
 
 syntax on
@@ -579,9 +583,9 @@ command! SceneEditor execute('silent! !start /B ' . g:g4_project_root.  '\..\out
 command! Ipython execute('silent! !start ipython')
 ca gm ClientGM
 ca conclient ReInitClientTelnet
-ca reloads ReloadServer
+ca rs ReloadServer
 ca reloadb BattleGMReload
-ca reload ClientGMReload
+ca rc ClientGMReload
 ca battle StartBattle
 ca cl StartClient
 ca sv AllServer
