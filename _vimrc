@@ -27,8 +27,9 @@ if 'VIRTUAL_EVN' in os.environ:
 EOF
 
 set nocompatible
-"source $VIMRUNTIME/vimrc_example.vim
+source $VIMRUNTIME/vimrc_example.vim
 source $VIMRUNTIME/mswin.vim
+behave mswin
 
 "settings for glsl.vim
 let g:glsl_file_extensions = '*.glsl,*.vs,*.ps,*.fx,*.frag,*.vert,*.nfx'
@@ -222,8 +223,8 @@ endif
 filetype plugin indent on
 
 "resolve menu encoding issue
-"source $VIMRUNTIME/delmenu.vim
-"source $VIMRUNTIME/menu.vim
+source $VIMRUNTIME/delmenu.vim
+source $VIMRUNTIME/menu.vim
 
 "scheme
 set background=dark
