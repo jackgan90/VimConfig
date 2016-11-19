@@ -288,8 +288,8 @@ nnoremap <leader>ff :GrepperRg
 "CtrlSF
 "nnoremap <leader>fsf :CtrlSF 
 "let g:ctrlsf_ackprg = 'rg'
-nnoremap <C-N> :tn<CR>
-nnoremap <C-M> :tp<CR>
+"nnoremap <C-N> :tn<CR>
+"nnoremap <C-M> :tp<CR>
 "Per plugin configuration end
 
 syntax on
