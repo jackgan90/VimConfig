@@ -26,9 +26,10 @@ if 'VIRTUAL_EVN' in os.environ:
 	execfile(activate_this, dict(__file__=activate_this))
 EOF
 
-set nocompatible
-source $VIMRUNTIME/vimrc_example.vim
-source $VIMRUNTIME/mswin.vim
+source $VIMRUNTIME/defaults.vim
+if has('win32')
+	source $VIMRUNTIME/mswin.vim
+endif
 "behave mswin
 
 "settings for glsl.vim
@@ -154,10 +155,10 @@ nnoremap <leader>c :tabclose<CR>
 "tagbar 
 nnoremap <leader>t :TagbarToggle<CR>
 "split size operation
-nnoremap <leader>1 :vertical resize +20<CR>
-nnoremap <leader>2 :vertical resize -20<CR>
-nnoremap <leader>3 :resize +20<CR>
-nnoremap <leader>4 :resize -20<CR>
+nnoremap <leader>1 :vertical resize +15<CR>
+nnoremap <leader>2 :vertical resize -15<CR>
+nnoremap <leader>3 :resize +10<CR>
+nnoremap <leader>4 :resize -10<CR>
 "NerdTree toggle
 nnoremap <leader>n :NERDTreeTabsToggle<CR>
 "Python delete whole function
@@ -194,6 +195,7 @@ set foldmethod=indent
 set foldlevel=99
 "prevent from encoding error
 set encoding=utf-8
+set termencoding=utf-8
 set fileencoding=utf-8
 set fileencodings=utf-8,chinese,latin-1
 "show line numbers
@@ -206,6 +208,7 @@ set noshowmode " Hide the default mode text (e.g. -- INSERT -- below the statusl
 set splitright
 set guioptions-=T
 set guioptions-=m
+set hlsearch
 set incsearch
 set tabstop=4
 set softtabstop=4
@@ -219,6 +222,8 @@ if has("win32")
 	set undodir=C:\WINDOWS\Temp
 	set writebackup
 endif
+set ignorecase
+set smartcase
 
 filetype plugin indent on
 
@@ -260,6 +265,7 @@ elseif executable('ag')
 endif
 "windows swapping
 "let g:windowswap_map_keys = 0 "prevent default bindings
+"Syntastic
 let g:syntastic_python_checkers = ["pyflakes"]
 set statusline+=%#warningmsg#
 set statusline+=%{SyntasticStatuslineFlag()}
@@ -592,7 +598,6 @@ ca sv AllServer
 ca ks KillServers
 ca restartbattle RestartBattle
 ca kc StopClient
-ca ipython Ipython
 "search map
 nnoremap <expr> <leader>ft ':GrepperRg -t py -w  ' . g:g4_project_root. '\<C-Left><Left>'
 nnoremap <expr> <leader>fc ':GrepperRg -t py -w  ' . g:g4_project_root. '\client\script\<C-Left><Left>'
