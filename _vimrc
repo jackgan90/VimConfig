@@ -554,10 +554,10 @@ if exists('*job_start')
 			if ch_status(l:channel) == "open"
 				let g:is_generating_ctags = 1
 			else
-				echom 'Some error occured when try to launch ctags channel'
+				echom '[ctags]Some error occured when try to launch ctags channel'
 			endif
 		else
-			echom "There's already a running ctags process updating project tags! Wait for it to finish patiently"
+			echom "[ctags]There's already a running ctags process updating project tags! Wait for it to finish patiently"
 		endif
 	endf
 	nnoremap <F4> :call GenerateCtagAsync()<CR>
