@@ -546,8 +546,7 @@ if exists('*job_start')
 	func! GenerateCtagAsync()
 		if !g:is_generating_ctags
 			let cwd = '.'
-			let l:command = "ctags -f .\\tags " . 
-						\"--fields=+lS --exclude *.html --exclude *.h --exclude *.cpp --exclude *.bat --exclude *.xml --exclude *.txt -R ."
+			let l:command = 'ctags -f .\tags --fields=+lS -R .' 
 			echom '[ctags] ------------------- Start to generate ctags for project ------------------------'
 			let l:channel = job_start(l:command, {"callback" : "CtagGenerationCallback", "close_cb" : "CtagCloseHandler"})
 			if ch_status(l:channel) == "open"
@@ -561,8 +560,7 @@ if exists('*job_start')
 	endf
 	nnoremap <F4> :call GenerateCtagAsync()<CR>
 else
-	nnoremap <expr> <F4> ':silent! !ctags -f .\tags '. '--fields=+lS --exclude *.html --exclude *.h --exclude *.cpp 
-	\--exclude *.bat --exclude *.xml --exclude *.txt -R .' . "\<CR>"
+	nnoremap <expr> <F4> ':silent! !ctags -f .\tags --fields=+lS -R .'. "\<CR>"
 endif
 
 au BufWrite *.py call G4ReloadCurrentFile()
