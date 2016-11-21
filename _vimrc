@@ -34,7 +34,7 @@ endif
 "behave mswin
 
 "settings for glsl.vim
-let g:glsl_file_extensions = '*.glsl,*.vs,*.ps,*.fx,*.frag,*.vert,*.nfx'
+let g:glsl_file_extensions = '*.glsl,*.vs,*.ps,*.frag,*.vert,*.nfx'
 filetype off
 if has('win32')
 	set rtp+=%USERPROFILE%/.vim/bundle/Vundle.vim
@@ -77,7 +77,8 @@ Plugin 'FelikZ/ctrlp-py-matcher'
 
 "for window swapping
 "Plugin 'wesQ3/vim-windowswap'
-"Plugin 'beyondmarc/glsl.vim'
+Plugin 'beyondmarc/glsl.vim'
+Plugin 'beyondmarc/hlsl.vim'
 "Plugin 'fugalh/desert.vim'
 "Plugin 'tomasr/molokai'
 "Plugin 'juneedahamed/svnj.vim'
