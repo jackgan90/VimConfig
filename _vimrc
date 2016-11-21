@@ -16,6 +16,7 @@
 "os.environ['PATH'] = ';'.join(path)
 "EOF
 
+set langmenu=en_US.UTF-8
 "python with virtualenv support
 py << EOF
 import os
