@@ -103,9 +103,9 @@ Plugin 'ludovicchabant/vim-gutentags'
 call vundle#end()
 
 let mapleader = ','
-autocmd FileType python setlocal noexpandtab tabstop=4 softtabstop=4 shiftwidth=4 autoindent
-au BufNewFile *.py call setline(1, '# -*- coding: utf-8 -*-')
-au BufRead,BufNewFile *.as set filetype=javascript
+autocmd! FileType python setlocal noexpandtab tabstop=4 softtabstop=4 shiftwidth=4 autoindent
+au! BufNewFile *.py call setline(1, '# -*- coding: utf-8 -*-')
+au! BufRead,BufNewFile *.as set filetype=javascript
 "set tags=./tags;,tags
 
 "helper functions
@@ -528,9 +528,7 @@ EOF
 let g:g4_auto_reload_current_file = 1
 function! G4ReloadCurrentFile()
 	if g:g4_auto_reload_current_file
-python << EOF
-reload_current_file()
-EOF
+		execute ':python reload_current_file()'
 	endif
 endfunction
 
@@ -565,7 +563,7 @@ else
 	nnoremap <expr> <F4> ':silent! !ctags -f .\tags --fields=+lS -R .'. "\<CR>"
 endif
 
-au BufWrite *.py call G4ReloadCurrentFile()
+au! BufWrite *.py call G4ReloadCurrentFile()
 command! -nargs=? ClientGM python execute_client_gm(<f-args>)
 command! ClientGMReload python execute_client_gm('reload')
 command! BattleGMReload python execute_client_gm('reload battle')
