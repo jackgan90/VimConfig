@@ -1,0 +1,29 @@
+"Although the path to the using _vsvimrc can be printed with set
+"command,currently I can't find a solution to obtain the value through vim
+"script,so just define the _vsvimrc path
+let mapleader = ','
+set nu
+set clipboard=unnamed
+set ignorecase
+set smartcase
+set hlsearch
+set incsearch
+set tabstop=4
+set shiftwidth=4
+set autoindent
+set noexpandtab
+nnoremap <esc> :nohl<cr>
+nnoremap <c-o> :vsc View.NavigateBackward<cr>
+nnoremap <c-i> :vsc View.NavigateForward<cr>
+nnoremap <c-p> :vsc Edit.NavigateTo<cr>
+nnoremap <leader>c<space> :vsc Edit.CommentSelection<cr>
+vnoremap <leader>c<space> :vsc Edit.CommentSelection<cr>
+nnoremap <leader>cc :vsc Edit.UncommentSelection<cr>
+vnoremap <leader>cc :vsc Edit.UncommentSelection<cr>
+nnoremap <leader>ff :vsc Edit.FindinFiles<cr>
+nnoremap <leader>fw :vsc Edit.FindAllReferences<cr>
+
+nnoremap <leader>t :vsc ListMembers<cr>
+nnoremap <space> za
+nnoremap <leader>er :source C:\Users\gjn1754\_vsvimrc<cr>
+
