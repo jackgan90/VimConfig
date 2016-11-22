@@ -113,6 +113,19 @@ function! IsBlankLine(lineNum)
 	return getline(a:lineNum) !~# '\v\S'
 endfunction
 
+function! GetVisual()
+        let reg_save = getreg('"') 
+        let regtype_save = getregtype('"') 
+        let cb_save = &clipboard 
+        set clipboard& 
+        normal! ""gvy 
+        let selection = getreg('"') 
+        call setreg('"', reg_save, regtype_save) 
+        let &clipboard = cb_save 
+        return selection 
+endfunction 
+
+
 func! EditMYVIMRC()
 	let linenum = line('$')
 	let empty_buf = 1
@@ -168,6 +181,7 @@ onoremap pf :call FindPythonFunctionUnderCursor()<CR>
 onoremap pc :call FindPythonClassUnderCursor()<CR>
 nnoremap <leader>F :call GotoNextPythonFunction()<CR>
 nnoremap <F5> :!python %<CR>
+nnoremap tn :tabnew<CR>
 "For easymotion and incsearch
 "let g:EasyMotion_smartcase = 1
 "map <Leader> <Plug>(easymotion-prefix)
@@ -294,6 +308,7 @@ func! Before_vc_setline(start, lines)
 endf
 "fast rg
 nnoremap <leader>ff :GrepperRg 
+nnoremap <expr> <leader>fw ':GrepperRg -w ' . expand('<cword>') . "\<CR>"
 "CtrlSF
 "nnoremap <leader>fsf :CtrlSF 
 "let g:ctrlsf_ackprg = 'rg'
@@ -605,4 +620,3 @@ nnoremap <expr> <leader>fa ':GrepperRg -w  ' . g:g4_project_root. '\client\res\u
 nnoremap <expr> <leader>vp ':silent! !start /B pyprof2calltree -k -i ' . g:g4_project_root .  '/profresult.prof' . "\<CR>"
 
 "G4 routine end
-
