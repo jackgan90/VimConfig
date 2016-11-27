@@ -180,7 +180,7 @@ nnoremap <leader>n :NERDTreeTabsToggle<CR>
 onoremap pf :call FindPythonFunctionUnderCursor()<CR>
 onoremap pc :call FindPythonClassUnderCursor()<CR>
 nnoremap <leader>F :call GotoNextPythonFunction()<CR>
-nnoremap <F5> :!python %<CR>
+nnoremap <F5> :!start python %<CR>
 nnoremap tn :tabnew<CR>
 "For easymotion and incsearch
 "let g:EasyMotion_smartcase = 1
