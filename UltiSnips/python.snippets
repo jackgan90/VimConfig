@@ -129,6 +129,26 @@ class AwSkill_${1:SkillId}(AwSkill.AwSkill):
 
 endsnippet
 
+snippet talent "G4 general talent template" b
+from entities.components.HeroTalentComp import Talent as Talent
+
+class Talent_${1:TalentId}(Talent):
+	def __init__(self, val, level, comp):
+		super(Talent_$1, self).__init__(val, level, comp)
+
+	def start(self):
+		super(Talent_$1, self).start()
+
+	def destroy(self):
+		super(Talent_$1, self).destroy()
+
+endsnippet
+
+snippet asc "G4 afterSkillCalc method signature" b
+def afterSkillCalc(self, fromEntity, targetEntity, skillCalcResult):
+	pass
+endsnippet
+
 snippet newpa "new panel" b
 import ui.UIBase as UIBase
 
