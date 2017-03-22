@@ -51,7 +51,9 @@ Plugin 'scrooloose/syntastic'
 "theme
 "Plugin 'jnurmine/Zenburn'
 "theme
+if !has('mac')
 Plugin 'altercation/vim-colors-solarized'
+endif
 "directory management
 Plugin 'scrooloose/nerdtree'
 "nerdtree tabs
