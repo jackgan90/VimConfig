@@ -230,6 +230,10 @@ set noshowmode " Hide the default mode text (e.g. -- INSERT -- below the statusl
 set splitright
 set guioptions-=T
 set guioptions-=m
+set guioptions-=r
+set guioptions-=R
+set guioptions-=l
+set guioptions-=L
 set hlsearch
 set incsearch
 set tabstop=4
@@ -295,6 +299,9 @@ set statusline+=%{SyntasticStatuslineFlag()}
 set statusline+=%*
 
 let g:syntastic_always_populate_loc_list = 1
+if has('win32')
+	nnoremap <silent> <C-CR> :call libcallnr('gvimfullscreen.dll', 'ToggleFullScreen', 0)<CR>
+endif
 "let g:syntastic_auto_loc_list = 1
 "let g:syntastic_check_on_open = 1
 "let g:syntastic_check_on_wq = 0
