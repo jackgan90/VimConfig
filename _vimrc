@@ -89,10 +89,10 @@ Plugin 'itchyny/lightline.vim'
 Plugin 'juneedahamed/vc.vim'
 "Plugin 'tpope/vim-surround'
 "Plugin 'tpope/vim-repeat'
-"Plugin 'easymotion/vim-easymotion'
-"Plugin 'haya14busa/incsearch.vim'
-"Plugin 'haya14busa/incsearch-fuzzy.vim'
-"Plugin 'haya14busa/incsearch-easymotion.vim'
+Plugin 'easymotion/vim-easymotion'
+Plugin 'haya14busa/incsearch.vim'
+Plugin 'haya14busa/incsearch-fuzzy.vim'
+Plugin 'haya14busa/incsearch-easymotion.vim'
 "code completion
 Plugin 'Valloric/YouCompleteMe'
 Plugin 'SirVer/ultisnips'
@@ -270,7 +270,7 @@ else
 	let g:UltiSnipsSnippetDirectories=['~/.vim/UltiSnips']
 endif
 "NerdTree
-let NERDTreeIgnore=['\.pyc$', '\~$', '\.cache$', '\.exe$', '\.dll$', '\.sfx$', '\.gim$', '\.gis$', '\.jpg$', '\.png$', '\.fla$', '\.swf$', '\.bmp$', '\.map$', '\.scn$', '\.scnex$', '\.tga$', '\.mtg$', '\.ags$', '\.ktx$', '\.mesh$', '\.pvr$', '\.pvr2$', '\.dds$', '\.mtl$', '\.rar$', '\.ttf$', '\.gif$', '\.mp3$', '\.wav$', '\.fsb$', '\.fev$', '\.m4a$'] "ignore files in NERDTree
+let NERDTreeIgnore=['/.pyc$', '/~$', '/.cache$', '/.exe$', '/.dll$', '/.sfx$', '/.gim$', '/.gis$', '/.jpg$', '/.png$', '/.fla$', '/.swf$', '/.bmp$', '/.map$', '/.scn$', '/.scnex$', '/.tga$', '/.mtg$', '/.ags$', '/.ktx$', '/.mesh$', '/.pvr$', '/.pvr2$', '/.dds$', '/.mtl$', '/.rar$', '/.ttf$', '/.gif$', '/.mp3$', '/.wav$', '/.fsb$', '/.fev$', '/.m4a$'] "ignore files in NERDTree
 let g:nerdtree_tabs_open_on_console_startup=0       "automatically open nerdtree tab on startup
 let g:nerdtree_tabs_open_on_gui_startup = 0
 "ctrlp
