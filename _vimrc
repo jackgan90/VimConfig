@@ -301,6 +301,7 @@ set statusline+=%*
 let g:syntastic_always_populate_loc_list = 1
 if has('win32')
 	nnoremap <silent> <C-CR> :call libcallnr('gvimfullscreen.dll', 'ToggleFullScreen', 0)<CR>
+	autocmd GUIEnter * call libcallnr('gvimfullscreen.dll', 'ToggleFullScreen', 0)
 endif
 "let g:syntastic_auto_loc_list = 1
 "let g:syntastic_check_on_open = 1
