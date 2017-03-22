@@ -27,8 +27,8 @@ if 'VIRTUAL_EVN' in os.environ:
 	execfile(activate_this, dict(__file__=activate_this))
 EOF
 
-source $VIMRUNTIME/defaults.vim
 if has('win32')
+	source $VIMRUNTIME/defaults.vim
 	source $VIMRUNTIME/mswin.vim
 endif
 "behave mswin
