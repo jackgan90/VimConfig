@@ -41,6 +41,20 @@ if has('win32')
 else
 	set rtp+=~/.vim/bundle/Vundle.vim
 endif
+
+func! IsMac()
+	if !has("unix")
+		return 0
+	endif
+	let s:uname = system("uname")
+	if s:uname == "Darwin\n"
+		return 1
+	else
+		return 0
+	endif
+	return 0
+endf
+
 call vundle#begin()
 
 Plugin 'VundleVim/Vundle.vim'
@@ -51,9 +65,7 @@ Plugin 'scrooloose/syntastic'
 "theme
 "Plugin 'jnurmine/Zenburn'
 "theme
-if !has('mac')
 Plugin 'altercation/vim-colors-solarized'
-endif
 Plugin 'JazzCore/ctrlp-cmatcher'
 "directory management
 Plugin 'scrooloose/nerdtree'
@@ -280,7 +292,7 @@ let g:nerdtree_tabs_open_on_console_startup=0       "automatically open nerdtree
 let g:nerdtree_tabs_open_on_gui_startup = 0
 "ctrlp
 let g:ctrlp_max_files = 0
-if has('mac')
+if IsMac()
 let g:ctrlp_match_func = { 'match': 'matcher#cmatch' }
 else
 let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
@@ -306,6 +318,9 @@ set statusline+=%*
 let g:syntastic_always_populate_loc_list = 1
 if has('win32')
 	nnoremap <silent> <C-CR> :call libcallnr('gvimfullscreen.dll', 'ToggleFullScreen', 0)<CR>
+endif
+if IsMac()
+	let g:gutentags_ctags_executable = '/usr/local/bin/ctags'
 endif
 "let g:syntastic_auto_loc_list = 1
 "let g:syntastic_check_on_open = 1
