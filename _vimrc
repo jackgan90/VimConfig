@@ -54,6 +54,7 @@ Plugin 'scrooloose/syntastic'
 if !has('mac')
 Plugin 'altercation/vim-colors-solarized'
 endif
+Plugin 'JazzCore/ctrlp-cmatcher'
 "directory management
 Plugin 'scrooloose/nerdtree'
 "nerdtree tabs
@@ -279,7 +280,11 @@ let g:nerdtree_tabs_open_on_console_startup=0       "automatically open nerdtree
 let g:nerdtree_tabs_open_on_gui_startup = 0
 "ctrlp
 let g:ctrlp_max_files = 0
+if has('mac')
+let g:ctrlp_match_func = { 'match': 'matcher#cmatch' }
+else
 let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
+endif
 let g:ctrlp_use_caching = 1
 "rg
 if executable('rg')
