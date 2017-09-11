@@ -60,6 +60,24 @@ except:
 	print 'can\'t printStackInfo'
 endsnippet
 
+snippet mp "module variable hook" b
+import sys
+class ModuleProxy(object): 
+	def __init__(self, module): 
+		object.__setattr__(self, 'module', module) 
+
+	def __getattribute__(self, name): 
+		module = object.__getattribute__(self, 'module') 
+		return getattr(module, name) 
+	
+	def __setattr__(self, name, value): 
+		module = object.__getattribute__(self, 'module') 
+		print "setting %s=%s" % (name, value) 
+		setattr(module, name, value) 
+	
+sys.modules[__name__] = ModuleProxy(__import__(__name__)) 
+endsnippet
+
 snippet pyps "python profile start code" b
 import cProfile
 pr = cProfile.Profile()

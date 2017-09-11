@@ -630,9 +630,9 @@ command! UpTrunk execute('silent! !svn up ' . g:g4_project_root)
 command! UpDesign execute('silent! !svn up ' . g:g4_project_root. '\..\design')
 command! UpOutsource execute('silent! !svn up ' . g:g4_project_root. '\..\outsource')
 command! LocalExportTable execute('silent! !cd ' . g:g4_project_root.  '\client\tools\export_table_tool_new && export_use_addedFiles')
-command! ModelEditor execute('silent! !start /B ' . g:g4_project_root. '\..\outsource\neox\tool_new\modeleditor.exe')
-command! FxEditor execute('silent! !start /B ' . g:g4_project_root.  '\..\outsource\neox\tool_new\FxEdit.exe')
-command! SceneEditor execute('silent! !start /B ' . g:g4_project_root.  '\..\outsource\neox\tool_new\sceneeditor.exe')
+command! ModelEditor execute('silent! !start /B ' . g:g4_project_root. '\..\outsource\neox\tool_new2\modeleditor.exe')
+command! FxEditor execute('silent! !start /B ' . g:g4_project_root.  '\..\outsource\neox\tool_new2\FxEdit.exe')
+command! SceneEditor execute('silent! !start /B ' . g:g4_project_root.  '\..\outsource\neox\tool_new2\sceneeditor.exe')
 command! Ipython execute('silent! !start ipython')
 ca gm ClientGM
 ca conclient ReInitClientTelnet
