@@ -115,6 +115,14 @@ Plugin 'nathanaelkane/vim-indent-guides'
 "Plugin 'dyng/ctrlsf.vim'
 Plugin 'jiangmiao/auto-pairs'
 Plugin 'ludovicchabant/vim-gutentags'
+Plugin 'vim-python/python-syntax'
+let g:python_version_2 = 1
+let g:python_highlight_class_vars = 0
+let g:python_highlight_indent_errors = 0
+let g:python_highlight_space_errors = 0
+let g:python_highlight_operators = 0
+let g:python_highlight_all = 1
+let g:python_slow_sync = 0
 call vundle#end()
 
 let mapleader = ','
