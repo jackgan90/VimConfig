@@ -471,7 +471,7 @@ function! FindPythonClassUnderCursor()
 endfunction
 
 "G4 routine start
-let g:g4_project_root='f:\trunk'
+let g:g4_project_root='H:\g4\trunk'
 function! G4ChangeCWDToProjectRoot()
 	execute 'normal! :cd '. g:g4_project_root. "\<CR>"
 	call nerdtree#ui_glue#chRootCwd()
@@ -493,7 +493,7 @@ def get_client_count():
 		try:
 			if process.name() != 'client.exe':
 				continue
-			if process.exe().lower().find(projectRoot) >= 0:
+			if process.exe().lower().find(projectRoot.lower()) >= 0:
 				count += 1
 		except:
 			pass
@@ -532,7 +532,6 @@ def execute_client_gm(cmd):
 
 	for port in invalidPorts:
 		del telnetClients[port]
-
 	connect_to_client(lambda tn: tn.write('$%s\r\n' % cmd))
 		
 
@@ -654,10 +653,10 @@ ca ks KillServers
 ca restartbattle RestartBattle
 ca kc StopClient
 "search map
-nnoremap <expr> <leader>ft ':GrepperRg -t py -w  ' . g:g4_project_root. '\<C-Left><Left>'
-nnoremap <expr> <leader>fc ':GrepperRg -t py -w  ' . g:g4_project_root. '\client\script\<C-Left><Left>'
-nnoremap <expr> <leader>fs ':GrepperRg -t py -w  ' . g:g4_project_root. '\server\<C-Left><Left>'
-nnoremap <expr> <leader>fa ':GrepperRg -w  ' . g:g4_project_root. '\client\res\ui\as3\<C-Left><Left>'
+nnoremap <expr> <leader>ft ':GrepperRg -t py -w  ' . g:g4_project_root. '<C-Left><Left>'
+nnoremap <expr> <leader>fc ':GrepperRg -t py -w  ' . g:g4_project_root. '\client\script<C-Left><Left>'
+nnoremap <expr> <leader>fs ':GrepperRg -t py -w  ' . g:g4_project_root. '\server<C-Left><Left>'
+nnoremap <expr> <leader>fa ':GrepperRg -w  ' . g:g4_project_root. '\client\res\ui\as3<C-Left><Left>'
 nnoremap <expr> <leader>vp ':silent! !start /B pyprof2calltree -k -i ' . g:g4_project_root .  '/profresult.prof' . "\<CR>"
 
 "G4 routine end
