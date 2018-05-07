@@ -116,6 +116,7 @@ Plugin 'nathanaelkane/vim-indent-guides'
 Plugin 'jiangmiao/auto-pairs'
 Plugin 'ludovicchabant/vim-gutentags'
 Plugin 'vim-python/python-syntax'
+Plugin 'Shougo/echodoc.vim'
 let g:python_version_2 = 1
 let g:python_highlight_class_vars = 0
 let g:python_highlight_indent_errors = 0
@@ -563,7 +564,7 @@ def stop_client():
 		try:
 			if process.name() != 'client.exe':
 				continue
-			if process.exe().lower().find(projectRoot) >= 0:
+			if process.exe().lower().find(projectRoot.lower()) >= 0:
 				process.kill()
 		except:
 			pass
@@ -578,7 +579,46 @@ def launch_client(count=1):
 		project_root = vim.eval('g:g4_project_root')
 		subprocess.Popen('%s\client\engine\client\client.exe' % project_root,cwd='client')
 
+def execute_tortoisesvn_command(cmd, args):
+	import subprocess
+	try:
+		subprocess.Popen('TortoiseProc /command:%s %s' % (cmd, args))
+	except:
+		return False
+	return True
 
+def update_g4_trunk():
+	#first try use tortoisesvn to update client then use original svn command
+	projectRoot = vim.eval('g:g4_project_root')
+	ret = execute_tortoisesvn_command('update', '/path %s' % projectRoot)
+	if not ret:
+		vim.command('silent! !svn up %s' % projectRoot)
+
+def commit_g4_trunk():
+	projectRoot = vim.eval('g:g4_project_root')
+	ret = execute_tortoisesvn_command('commit', '/path %s' % projectRoot)
+	if not ret:
+		print 'Failed to show tortoise svn commit dialogue!'
+
+def show_current_file_svn_log():
+	filename = vim.eval("expand('%:p')")
+	ret = execute_tortoisesvn_command('log', '/path %s' % filename)
+	if not ret:
+		vim.command('!svn log %s -l 20' % filename)
+
+def blame_current_file_at_cursor():
+	filename = vim.eval("expand('%:p')")
+	currentLine = int(vim.eval('line(".")'))
+	ret = execute_tortoisesvn_command('blame', '/path %s /line:%d' % (filename, currentLine))
+	if not ret:
+		print 'Failed to show tortoisesvn blame dialogue!'
+
+def show_current_file_diff():
+	filename = vim.eval("expand('%:p')")
+	ret = execute_tortoisesvn_command('diff', '/path %s' % filename)
+	if not ret:
+		print 'Failed to show diff with tortoise svn'
+	
 EOF
 let g:g4_auto_reload_current_file = 1
 function! G4ReloadCurrentFile()
@@ -633,7 +673,11 @@ command! KillServers execute('!start /B cd ' . g:g4_project_root . '\server\Serv
 command! RestartBattle execute('!start /B cd ' . g:g4_project_root . '\server\ServerLauncher && killbattle.bat && battle.bat')
 command! StopClient python stop_client()
 command! -nargs=* RunServerScript execute('!start /B cd '. g:g4_project_root . '\server\ServerLauncher && '.<q-args>)
-command! UpTrunk execute('silent! !svn up ' . g:g4_project_root)
+command! UpTrunk python update_g4_trunk()
+command! CommitTrunk python commit_g4_trunk()
+command! Log python show_current_file_svn_log()
+command! Blame python blame_current_file_at_cursor()
+command! Diff python show_current_file_diff()
 command! UpDesign execute('silent! !svn up ' . g:g4_project_root. '\..\design')
 command! UpOutsource execute('silent! !svn up ' . g:g4_project_root. '\..\outsource')
 command! LocalExportTable execute('silent! !cd ' . g:g4_project_root.  '\client\tools\export_table_tool_new && export_use_addedFiles')
