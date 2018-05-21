@@ -281,7 +281,9 @@ filetype plugin indent on
 
 "scheme
 set background=dark
-colorscheme solarized
+if !has('unix')
+	colorscheme solarized
+endif
 
 "Per plugin configuration start
 "YCm
@@ -594,6 +596,20 @@ def update_g4_trunk():
 	if not ret:
 		vim.command('silent! !svn up %s' % projectRoot)
 
+def update_g4_outsource():
+	#first try use tortoisesvn to update client then use original svn command
+	projectRoot = vim.eval('g:g4_project_root')
+	ret = execute_tortoisesvn_command('update', '/path %s' % projectRoot + '\..\outsource')
+	if not ret:
+		vim.command('silent! !svn up %s' % projectRoot)
+
+def update_g4_design():
+	#first try use tortoisesvn to update client then use original svn command
+	projectRoot = vim.eval('g:g4_project_root')
+	ret = execute_tortoisesvn_command('update', '/path %s' % projectRoot + '\..\design')
+	if not ret:
+		vim.command('silent! !svn up %s' % projectRoot)
+
 def commit_g4_trunk():
 	projectRoot = vim.eval('g:g4_project_root')
 	ret = execute_tortoisesvn_command('commit', '/path %s' % projectRoot)
@@ -678,8 +694,8 @@ command! CommitTrunk python commit_g4_trunk()
 command! Log python show_current_file_svn_log()
 command! Blame python blame_current_file_at_cursor()
 command! Diff python show_current_file_diff()
-command! UpDesign execute('silent! !svn up ' . g:g4_project_root. '\..\design')
-command! UpOutsource execute('silent! !svn up ' . g:g4_project_root. '\..\outsource')
+command! UpDesign python update_g4_design()
+command! UpOutsource python update_g4_outsource()
 command! LocalExportTable execute('silent! !cd ' . g:g4_project_root.  '\client\tools\export_table_tool_new && export_use_addedFiles')
 command! ModelEditor execute('silent! !start /B ' . g:g4_project_root. '\..\outsource\neox\tool_new2\modeleditor.exe')
 command! FxEditor execute('silent! !start /B ' . g:g4_project_root.  '\..\outsource\neox\tool_new2\FxEdit.exe')
