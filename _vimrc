@@ -34,7 +34,7 @@ endif
 "behave mswin
 
 "settings for glsl.vim
-let g:glsl_file_extensions = '*.glsl,*.vs,*.ps,*.frag,*.vert,*.nfx'
+let g:glsl_file_extensions = '*.glsl,*.vs,*.ps,*.frag,*.vert,*.nfx,*.spzs'
 filetype off
 if has('win32')
 	set rtp+=%USERPROFILE%/.vim/bundle/Vundle.vim
@@ -117,6 +117,7 @@ Plugin 'jiangmiao/auto-pairs'
 Plugin 'ludovicchabant/vim-gutentags'
 Plugin 'vim-python/python-syntax'
 Plugin 'Shougo/echodoc.vim'
+Plugin 'dracula/vim'
 let g:python_version_2 = 1
 let g:python_highlight_class_vars = 0
 let g:python_highlight_indent_errors = 0
@@ -204,11 +205,7 @@ nnoremap <leader>n :NERDTreeTabsToggle<CR>
 onoremap pf :call FindPythonFunctionUnderCursor()<CR>
 onoremap pc :call FindPythonClassUnderCursor()<CR>
 nnoremap <leader>F :call GotoNextPythonFunction()<CR>
-if has('win32')
-	nnoremap <F5> :!start python %<CR>
-else
-	nnoremap <F5> :python %<CR>
-endif
+nnoremap <F5> :!python %<CR>
 nnoremap tn :tabnew<CR>
 "For easymotion and incsearch
 "let g:EasyMotion_smartcase = 1
@@ -263,11 +260,11 @@ set softtabstop=4
 set noexpandtab
 set shiftwidth=4
 if has("win32")
-	set backup
-	set backupdir=C:\WINDOWS\Temp
-	set backupskip=C:\WINDOWS\Temp\*
-	set directory=C:\WINDOWS\Temp
-	set undodir=C:\WINDOWS\Temp
+	set nobackup
+	set backupdir=C:\\Temp
+	set backupskip=C:\\Temp\\*
+	set directory=C:\\Temp
+	set undodir=C:\\Temp
 	set writebackup
 endif
 set ignorecase
@@ -282,7 +279,7 @@ filetype plugin indent on
 "scheme
 set background=dark
 if !has('unix')
-	colorscheme solarized
+	colorscheme dracula
 endif
 
 "Per plugin configuration start
@@ -473,14 +470,14 @@ function! FindPythonClassUnderCursor()
 	call FindPythonLaxeme(1, 'class')
 endfunction
 
-"G4 routine start
-let g:g4_project_root='H:\g4\trunk'
-function! G4ChangeCWDToProjectRoot()
-	execute 'normal! :cd '. g:g4_project_root. "\<CR>"
+"game routine start
+let g:game_project_root='H:\bh1\code\trunk'
+function! GameChangeCWDToProjectRoot()
+	execute 'normal! :cd '. g:game_project_root. "\<CR>"
 	call nerdtree#ui_glue#chRootCwd()
 endfunction
 
-nnoremap <leader>go :call G4ChangeCWDToProjectRoot()<CR>
+nnoremap <leader>go :call GameChangeCWDToProjectRoot()<CR>
 python << EOF
 DEFAULT_TELNET_PORT = 30000
 import telnetlib
@@ -491,7 +488,7 @@ telnetClients = {}
 def get_client_count():
 	import psutil
 	count = 0
-	projectRoot = vim.eval('g:g4_project_root')
+	projectRoot = vim.eval('g:game_project_root')
 	for process in psutil.process_iter():
 		try:
 			if process.name() != 'client.exe':
@@ -542,7 +539,7 @@ def reload_current_file():
 	import base64
 	import vim
 	filename = vim.eval("expand('%:p')")
-	projectRoot = vim.eval('g:g4_project_root')
+	projectRoot = vim.eval('g:game_project_root')
 	if filename.lower().find(projectRoot.lower()) >= 0:
 		target = base64.b64encode(bytearray(filename, 'utf-8'))
 		execute_client_gm('reloadTarget %s' % target)
@@ -561,7 +558,7 @@ def reinit_client_telnet():
 
 def stop_client():
 	import psutil
-	projectRoot = vim.eval('g:g4_project_root')
+	projectRoot = vim.eval('g:game_project_root')
 	for process in psutil.process_iter():
 		try:
 			if process.name() != 'client.exe':
@@ -578,8 +575,40 @@ def launch_client(count=1):
 	except:
 		count = 1
 	for i in xrange(count):
-		project_root = vim.eval('g:g4_project_root')
-		subprocess.Popen('%s\client\engine\client\client.exe' % project_root,cwd='client')
+		project_root = vim.eval('g:game_project_root')
+		subprocess.Popen('%s\client\engine\client.exe' % project_root,cwd='%s\client' % project_root)
+
+def run_server_bin_script(script_name):
+	project_root = vim.eval('g:game_project_root')
+	cur_cwd = os.getcwd()
+	os.chdir('%s/server/bin' % project_root)
+	subprocess.Popen('%s.bat' % script_name)
+	os.chdir(cur_cwd)
+
+def launch_server():
+	run_server_bin_script('start')
+
+def reload_server():
+	run_server_bin_script('reload')
+
+def kill_server():
+	import psutil
+	import subprocess
+	projectRoot = vim.eval('g:game_project_root')
+	for process in psutil.process_iter():
+		try:
+			if process.name().lower().find('python.exe') < 0:
+				continue
+			for cmd in process.cmdline():
+				if cmd.find('%s\server\\bin' % projectRoot) >= 0:
+					process.kill()
+					break
+		except:
+			pass
+	si = subprocess.STARTUPINFO()
+	si.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+	#si.wShowWindow = subprocess.SW_HIDE # default
+	subprocess.call('taskkill /F /FI "WINDOWTITLE eq BH1Server*" /T', startupinfo=si)
 
 def execute_tortoisesvn_command(cmd, args):
 	import subprocess
@@ -589,29 +618,29 @@ def execute_tortoisesvn_command(cmd, args):
 		return False
 	return True
 
-def update_g4_trunk():
+def update_game_trunk():
 	#first try use tortoisesvn to update client then use original svn command
-	projectRoot = vim.eval('g:g4_project_root')
+	projectRoot = vim.eval('g:game_project_root')
 	ret = execute_tortoisesvn_command('update', '/path %s' % projectRoot)
 	if not ret:
 		vim.command('silent! !svn up %s' % projectRoot)
 
-def update_g4_outsource():
+def update_game_outsource():
 	#first try use tortoisesvn to update client then use original svn command
-	projectRoot = vim.eval('g:g4_project_root')
+	projectRoot = vim.eval('g:game_project_root')
 	ret = execute_tortoisesvn_command('update', '/path %s' % projectRoot + '\..\outsource')
 	if not ret:
 		vim.command('silent! !svn up %s' % projectRoot)
 
-def update_g4_design():
+def update_game_design():
 	#first try use tortoisesvn to update client then use original svn command
-	projectRoot = vim.eval('g:g4_project_root')
+	projectRoot = vim.eval('g:game_project_root')
 	ret = execute_tortoisesvn_command('update', '/path %s' % projectRoot + '\..\design')
 	if not ret:
 		vim.command('silent! !svn up %s' % projectRoot)
 
-def commit_g4_trunk():
-	projectRoot = vim.eval('g:g4_project_root')
+def commit_game_trunk():
+	projectRoot = vim.eval('g:game_project_root')
 	ret = execute_tortoisesvn_command('commit', '/path %s' % projectRoot)
 	if not ret:
 		print 'Failed to show tortoise svn commit dialogue!'
@@ -636,9 +665,9 @@ def show_current_file_diff():
 		print 'Failed to show diff with tortoise svn'
 	
 EOF
-let g:g4_auto_reload_current_file = 1
-function! G4ReloadCurrentFile()
-	if g:g4_auto_reload_current_file
+let g:game_auto_reload_current_file = 1
+function! GameReloadCurrentFile()
+	if g:game_auto_reload_current_file
 		execute ':python reload_current_file()'
 	endif
 endfunction
@@ -669,37 +698,37 @@ if exists('*job_start')
 			echom "[ctags]There's already a running ctags process updating project tags! Wait for it to finish patiently"
 		endif
 	endf
-	nnoremap <F4> :call GenerateCtagAsync()<CR>
+	"nnoremap <F4> :call GenerateCtagAsync()<CR>
 else
-	nnoremap <expr> <F4> ':silent! !ctags -f .\tags --fields=+lS -R .'. "\<CR>"
+	"nnoremap <expr> <F4> ':silent! !ctags -f .\tags --fields=+lS -R .'. "\<CR>"
 endif
 
-au! BufWrite *.py call G4ReloadCurrentFile()
+au! BufWrite *.py call GameReloadCurrentFile()
 command! -nargs=? ClientGM python execute_client_gm(<f-args>)
 command! ClientGMReload python execute_client_gm('reload')
 command! BattleGMReload python execute_client_gm('reload battle')
 command! ReInitClientTelnet python reinit_client_telnet()
 command! ReloadCurrentFile python reload_current_file()
-command! ReloadServer execute('!start /B '. g:g4_project_root . '\server\ServerLauncher\reload.bat')
-command! StartServer execute('!start /B cd '. g:g4_project_root . '\server\ServerLauncher && start.bat')
-command! StartBattle execute('!start /B cd '. g:g4_project_root . '\server\ServerLauncher && battle.bat')
+command! ReloadServer python reload_server()
+command! StartServer execute('!start /B cd '. g:game_project_root . '\server\ServerLauncher && start.bat')
+command! StartBattle execute('!start /B cd '. g:game_project_root . '\server\ServerLauncher && battle.bat')
 command! -nargs=? StartClient python launch_client(<f-args>)
-command! AllServer execute('!start /B cd '. g:g4_project_root . '\server\ServerLauncher && start.bat && battle.bat')
-command! KillServers execute('!start /B cd ' . g:g4_project_root . '\server\ServerLauncher && kill.bat')
-command! RestartBattle execute('!start /B cd ' . g:g4_project_root . '\server\ServerLauncher && killbattle.bat && battle.bat')
+command! AllServer python launch_server()
+command! KillServers python kill_server()
+command! RestartBattle execute('!start /B cd ' . g:game_project_root . '\server\ServerLauncher && killbattle.bat && battle.bat')
 command! StopClient python stop_client()
-command! -nargs=* RunServerScript execute('!start /B cd '. g:g4_project_root . '\server\ServerLauncher && '.<q-args>)
-command! UpTrunk python update_g4_trunk()
-command! CommitTrunk python commit_g4_trunk()
+command! -nargs=* RunServerScript execute('!start /B cd '. g:game_project_root . '\server\ServerLauncher && '.<q-args>)
+command! UpTrunk python update_game_trunk()
+command! CommitTrunk python commit_game_trunk()
 command! Log python show_current_file_svn_log()
 command! Blame python blame_current_file_at_cursor()
 command! Diff python show_current_file_diff()
-command! UpDesign python update_g4_design()
-command! UpOutsource python update_g4_outsource()
-command! LocalExportTable execute('silent! !cd ' . g:g4_project_root.  '\client\tools\export_table_tool_new && export_use_addedFiles')
-command! ModelEditor execute('silent! !start /B ' . g:g4_project_root. '\..\outsource\neox\tool_new2\modeleditor.exe')
-command! FxEditor execute('silent! !start /B ' . g:g4_project_root.  '\..\outsource\neox\tool_new2\FxEdit.exe')
-command! SceneEditor execute('silent! !start /B ' . g:g4_project_root.  '\..\outsource\neox\tool_new2\sceneeditor.exe')
+command! UpDesign python update_game_design()
+command! UpOutsource python update_game_outsource()
+command! LocalExportTable execute('silent! !cd ' . g:game_project_root.  '\client\tools\export_table_tool && export_use_local_rules')
+command! ModelEditor execute('silent! !start /B ' . g:game_project_root. '\..\outsource\neox\tool_new2\modeleditor.exe')
+command! FxEditor execute('silent! !start /B ' . g:game_project_root.  '\..\outsource\neox\tool_new2\FxEdit.exe')
+command! SceneEditor execute('silent! !start /B ' . g:game_project_root.  '\..\outsource\neox\tool_new2\sceneeditor.exe')
 command! Ipython execute('silent! !start ipython')
 ca gm ClientGM
 ca conclient ReInitClientTelnet
@@ -713,10 +742,11 @@ ca ks KillServers
 ca restartbattle RestartBattle
 ca kc StopClient
 "search map
-nnoremap <expr> <leader>ft ':GrepperRg -t py -w  ' . g:g4_project_root. '<C-Left><Left>'
-nnoremap <expr> <leader>fc ':GrepperRg -t py -w  ' . g:g4_project_root. '\client\script<C-Left><Left>'
-nnoremap <expr> <leader>fs ':GrepperRg -t py -w  ' . g:g4_project_root. '\server<C-Left><Left>'
-nnoremap <expr> <leader>fa ':GrepperRg -w  ' . g:g4_project_root. '\client\res\ui\as3<C-Left><Left>'
-nnoremap <expr> <leader>vp ':silent! !start /B pyprof2calltree -k -i ' . g:g4_project_root .  '/profresult.prof' . "\<CR>"
+nnoremap <expr> <leader>ft ':GrepperRg -t py -w  ' . g:game_project_root. '<C-Left><Left>'
+nnoremap <expr> <leader>fc ':GrepperRg -t py -w  ' . g:game_project_root. '\client\script<C-Left><Left>'
+nnoremap <expr> <leader>fs ':GrepperRg -t py -w  ' . g:game_project_root. '\server<C-Left><Left>'
+nnoremap <expr> <leader>fa ':GrepperRg -w  ' . g:game_project_root. '\client\res\ui\as3<C-Left><Left>'
+nnoremap <expr> <leader>vp ':silent! !start /B pyprof2calltree -k -i ' . g:game_project_root .  '/profresult.prof' . "\<CR>"
+nnoremap <expr> <F4> ':CtrlP .' . "\<CR>"
 
 "G4 routine end
