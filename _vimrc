@@ -726,9 +726,9 @@ command! Diff python show_current_file_diff()
 command! UpDesign python update_game_design()
 command! UpOutsource python update_game_outsource()
 command! LocalExportTable execute('silent! !cd ' . g:game_project_root.  '\client\tools\export_table_tool && export_use_local_rules')
-command! ModelEditor execute('silent! !start /B ' . g:game_project_root. '\..\outsource\neox\tool_new2\modeleditor.exe')
-command! FxEditor execute('silent! !start /B ' . g:game_project_root.  '\..\outsource\neox\tool_new2\FxEdit.exe')
-command! SceneEditor execute('silent! !start /B ' . g:game_project_root.  '\..\outsource\neox\tool_new2\sceneeditor.exe')
+command! ModelEditor execute('silent! !start /B ' . g:game_project_root. '\..\..\art\tool_full\modeleditor.exe')
+command! FxEditor execute('silent! !start /B ' . g:game_project_root.  '\..\..\art\tool_full\FxEdit.exe')
+command! SceneEditor execute('silent! !start /B ' . g:game_project_root.  '\..\..\art\tool_full_x64\sceneeditor.exe')
 command! Ipython execute('silent! !start ipython')
 ca gm ClientGM
 ca conclient ReInitClientTelnet
