@@ -266,6 +266,7 @@ if has("win32")
 	set directory=C:\\Temp
 	set undodir=C:\\Temp
 	set writebackup
+	set rop=type:directx
 endif
 set ignorecase
 set smartcase
@@ -735,7 +736,7 @@ ca conclient ReInitClientTelnet
 ca rs ReloadServer
 ca reloadb BattleGMReload
 ca rc ClientGMReload
-ca battle StartBattle
+"ca battle StartBattle
 ca cl StartClient
 ca sv AllServer
 ca ks KillServers
