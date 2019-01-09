@@ -473,6 +473,8 @@ endfunction
 
 "game routine start
 let g:game_project_root='H:\bh1\code\trunk'
+"This file provide functionality of executing bat files background in Windows.
+let g:background_bat_helper = 'F:\VimConfig\background_bat_helper.vbs'
 function! GameChangeCWDToProjectRoot()
 	execute 'normal! :cd '. g:game_project_root. "\<CR>"
 	call nerdtree#ui_glue#chRootCwd()
@@ -587,21 +589,28 @@ def run_bat_in_cmder(script_name):
 	cmd_string = 'start %s\\vendor\\conemu-maximus5\\ConEmu.exe /icon "%s\\cmder.exe" /title Cmder /loadcfgfile "%s\\config\\ConEmu.xml" /cmd cmd /k "%s\\vendor\\init.bat && %s.bat"' % (CMDER_ROOT, CMDER_ROOT, CMDER_ROOT, CMDER_ROOT, script_name)
 	os.system(cmd_string)
 
-def run_server_bin_script(script_name):
+def run_server_bin_script(script_name, silent=False):
 	project_root = vim.eval('g:game_project_root')
 	cur_cwd = os.getcwd()
 	os.chdir('%s/server/bin' % project_root)
-	if os.environ.get('CMDER_ROOT', ''):
+	if os.environ.get('CMDER_ROOT', '') and not silent:
 		run_bat_in_cmder(script_name)
 	else:
-		subprocess.Popen('%s.bat' % script_name)
+		if silent:
+			background_bat_helper = vim.eval('g:background_bat_helper')
+			if background_bat_helper:
+				os.system('start /b wscript.exe %s %s.bat %%*' % (background_bat_helper, script_name))
+			else:
+				subprocess.Popen('%s.bat' % script_name)
+		else:
+			subprocess.Popen('%s.bat' % script_name)
 	os.chdir(cur_cwd)
 
 def launch_server():
 	run_server_bin_script('start')
 
 def reload_server():
-	run_server_bin_script('reload')
+	run_server_bin_script('reload', True)
 
 def kill_server():
 	import psutil
