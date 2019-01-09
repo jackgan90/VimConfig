@@ -579,11 +579,22 @@ def launch_client(count=1):
 		project_root = vim.eval('g:game_project_root')
 		subprocess.Popen('%s\client\engine\client.exe' % project_root,cwd='%s\client' % project_root)
 
+def run_bat_in_cmder(script_name):
+	CMDER_ROOT = os.environ.get('CMDER_ROOT', '')
+	if not CMDER_ROOT:
+		print 'Failed to find Cmder.Please install it first.'
+		return
+	cmd_string = 'start %s\\vendor\\conemu-maximus5\\ConEmu.exe /icon "%s\\cmder.exe" /title Cmder /loadcfgfile "%s\\config\\ConEmu.xml" /cmd cmd /k "%s\\vendor\\init.bat && %s.bat"' % (CMDER_ROOT, CMDER_ROOT, CMDER_ROOT, CMDER_ROOT, script_name)
+	os.system(cmd_string)
+
 def run_server_bin_script(script_name):
 	project_root = vim.eval('g:game_project_root')
 	cur_cwd = os.getcwd()
 	os.chdir('%s/server/bin' % project_root)
-	subprocess.Popen('%s.bat' % script_name)
+	if os.environ.get('CMDER_ROOT', ''):
+		run_bat_in_cmder(script_name)
+	else:
+		subprocess.Popen('%s.bat' % script_name)
 	os.chdir(cur_cwd)
 
 def launch_server():
