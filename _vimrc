@@ -1,24 +1,15 @@
-"python << EOF
-"import os
-"import re
-"path = os.environ['PATH'].split(';')
-
-"def contains_msvcr_lib(folder):
-    "try:
-        "for item in os.listdir(folder):
-            "if re.match(r'msvcr\d+\.dll', item):
-                "return True
-    "except:
-        "pass
-    "return False
-
-"path = [folder for folder in path if not contains_msvcr_lib(folder)]
-"os.environ['PATH'] = ';'.join(path)
-"EOF
-
 set langmenu=en_US.UTF-8
+function! s:UsingPython3()
+  if has('python3')
+    return 1
+  endif
+    return 0
+endfunction
+let s:using_python3 = s:UsingPython3()
+let s:python_until_eof = s:using_python3 ? "python3 << EOF" : "python << EOF"
 "python with virtualenv support
-py << EOF
+func! s:SetUpVirtualEnv()
+	exec s:python_until_eof
 import os
 import sys
 if 'VIRTUAL_EVN' in os.environ:
@@ -26,6 +17,8 @@ if 'VIRTUAL_EVN' in os.environ:
 	activate_this = os.path.join(project_base_dir, 'bin/activate_this.py')
 	execfile(activate_this, dict(__file__=activate_this))
 EOF
+endf
+call s:SetUpVirtualEnv()
 
 if has('win32')
 	source $VIMRUNTIME/defaults.vim
@@ -481,7 +474,9 @@ function! GameChangeCWDToProjectRoot()
 endfunction
 
 nnoremap <leader>go :call GameChangeCWDToProjectRoot()<CR>
-python << EOF
+func! s:SetUpDevRoutines()
+	exec s:python_until_eof
+
 DEFAULT_TELNET_PORT = 30000
 import telnetlib
 import subprocess
@@ -686,6 +681,10 @@ def show_current_file_diff():
 		print('Failed to show diff with tortoise svn')
 	
 EOF
+endf
+
+call s:SetUpDevRoutines()
+
 let g:game_auto_reload_current_file = 1
 function! GameReloadCurrentFile()
 	if g:game_auto_reload_current_file
