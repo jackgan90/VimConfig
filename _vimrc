@@ -513,7 +513,7 @@ def connect_to_client(callback=None):
 			try:
 				tn = telnetlib.Telnet('localhost', port)
 				tn.write('\r\n')
-				print 'Client Connected!', port
+				print('Client Connected! %d' % port)
 				telnetClients[port] = tn
 				if callable(callback):
 					callback(tn)
@@ -584,7 +584,7 @@ def launch_client(count=1):
 def run_bat_in_cmder(script_name):
 	CMDER_ROOT = os.environ.get('CMDER_ROOT', '')
 	if not CMDER_ROOT:
-		print 'Failed to find Cmder.Please install it first.'
+		print('Failed to find Cmder.Please install it first.')
 		return
 	cmd_string = 'start %s\\vendor\\conemu-maximus5\\ConEmu.exe /icon "%s\\cmder.exe" /title Cmder /loadcfgfile "%s\\config\\ConEmu.xml" /cmd cmd /k "%s\\vendor\\init.bat && %s.bat"' % (CMDER_ROOT, CMDER_ROOT, CMDER_ROOT, CMDER_ROOT, script_name)
 	os.system(cmd_string)
@@ -664,7 +664,7 @@ def commit_game_trunk():
 	projectRoot = vim.eval('g:game_project_root')
 	ret = execute_tortoisesvn_command('commit', '/path %s' % projectRoot)
 	if not ret:
-		print 'Failed to show tortoise svn commit dialogue!'
+		print('Failed to show tortoise svn commit dialogue!')
 
 def show_current_file_svn_log():
 	filename = vim.eval("expand('%:p')")
@@ -677,13 +677,13 @@ def blame_current_file_at_cursor():
 	currentLine = int(vim.eval('line(".")'))
 	ret = execute_tortoisesvn_command('blame', '/path %s /line:%d' % (filename, currentLine))
 	if not ret:
-		print 'Failed to show tortoisesvn blame dialogue!'
+		print('Failed to show tortoisesvn blame dialogue!')
 
 def show_current_file_diff():
 	filename = vim.eval("expand('%:p')")
 	ret = execute_tortoisesvn_command('diff', '/path %s' % filename)
 	if not ret:
-		print 'Failed to show diff with tortoise svn'
+		print('Failed to show diff with tortoise svn')
 	
 EOF
 let g:game_auto_reload_current_file = 1
