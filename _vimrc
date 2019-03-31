@@ -111,6 +111,7 @@ Plugin 'ludovicchabant/vim-gutentags'
 Plugin 'vim-python/python-syntax'
 Plugin 'Shougo/echodoc.vim'
 Plugin 'dracula/vim'
+"python-syntax config start
 let g:python_version_2 = 1
 let g:python_highlight_class_vars = 0
 let g:python_highlight_indent_errors = 0
@@ -118,6 +119,7 @@ let g:python_highlight_space_errors = 0
 let g:python_highlight_operators = 0
 let g:python_highlight_all = 1
 let g:python_slow_sync = 0
+"python-syntax config end
 call vundle#end()
 
 let mapleader = ','
