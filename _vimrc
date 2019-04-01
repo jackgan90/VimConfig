@@ -769,6 +769,6 @@ nnoremap <expr> <leader>fc ':GrepperRg -t py -w  ' . g:game_project_root. '\clie
 nnoremap <expr> <leader>fs ':GrepperRg -t py -w  ' . g:game_project_root. '\server<C-Left><Left>'
 nnoremap <expr> <leader>fa ':GrepperRg -w  ' . g:game_project_root. '\client\res\ui\as3<C-Left><Left>'
 nnoremap <expr> <leader>vp ':silent! !start /B pyprof2calltree -k -i ' . g:game_project_root .  '/profresult.prof' . "\<CR>"
-nnoremap <expr> <F4> ':CtrlP .' . "\<CR>"
+nnoremap <expr> <leader>cp ':CtrlP .' . "\<CR>"
 
 "G4 routine end
