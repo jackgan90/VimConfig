@@ -25,7 +25,7 @@ Plugin 'scrooloose/syntastic'
 "Plugin 'jnurmine/Zenburn'
 "theme
 Plugin 'altercation/vim-colors-solarized'
-"Plugin 'JazzCore/ctrlp-cmatcher'
+Plugin 'JazzCore/ctrlp-cmatcher'
 "directory management
 Plugin 'scrooloose/nerdtree'
 "nerdtree tabs
@@ -270,7 +270,7 @@ let g:nerdtree_tabs_open_on_gui_startup = 0
 
 "Ctrlp start
 let g:ctrlp_max_files = 0
-if IsMac()
+if !has('win32')
 let g:ctrlp_match_func = { 'match': 'matcher#cmatch' }
 else
 let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
