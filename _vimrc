@@ -34,7 +34,7 @@ Plugin 'jistr/vim-nerdtree-tabs'
 Plugin 'ctrlpvim/ctrlp.vim'
 
 "Plugin 'rking/ag.vim'
-Plugin 'mhinz/vim-grepper'
+"Plugin 'mhinz/vim-grepper'
 
 
 Plugin 'scrooloose/nerdcommenter'
@@ -70,7 +70,7 @@ Plugin 'SirVer/ultisnips'
 Plugin 'honza/vim-snippets'
 "Plugin 'skywind3000/asyncrun.vim'
 Plugin 'nathanaelkane/vim-indent-guides'
-"Plugin 'dyng/ctrlsf.vim'
+Plugin 'dyng/ctrlsf.vim'
 Plugin 'jiangmiao/auto-pairs'
 Plugin 'ludovicchabant/vim-gutentags'
 Plugin 'vim-python/python-syntax'
@@ -208,7 +208,6 @@ nnoremap <leader>n :NERDTreeTabsToggle<CR>
 "Python delete whole function
 onoremap pf :call FindPythonFunctionUnderCursor()<CR>
 onoremap pc :call FindPythonClassUnderCursor()<CR>
-nnoremap <leader>F :call GotoNextPythonFunction()<CR>
 nnoremap <F5> :!python %<CR>
 nnoremap tn :tabnew<CR>
 "For easymotion and incsearch
@@ -302,14 +301,10 @@ if IsMac()
 endif
 "gutenttags end
 
-"fast rg
-nnoremap <leader>ff :GrepperRg 
-nnoremap <expr> <leader>fw ':GrepperRg -w ' . expand('<cword>') . "\<CR>"
-"CtrlSF
-"nnoremap <leader>fsf :CtrlSF 
-"let g:ctrlsf_ackprg = 'rg'
-"nnoremap <C-N> :tn<CR>
-"nnoremap <C-M> :tp<CR>
+"CtrlSF start
+nnoremap <leader>ff :CtrlSF 
+nnoremap <expr> <leader>fw ':CtrlSF ' . expand('<cword>') . "\<CR>"
+"CtrlSF end
 "Per plugin configuration end
 
 
@@ -369,12 +364,6 @@ function! RecognizePythonStructure(startLine)
 		endif
 	endwhile
 	return endLine
-endfunction
-
-function! GotoNextPythonFunction()
-		let pattern = '\v.*def\s*\S*\(.*\)\s*:'
-		let cmd = "silent! normal! /". pattern. "\<CR>l" 
-		execute cmd
 endfunction
 
 function! FindPySignatureByFoldLevel(keyword)
@@ -691,10 +680,8 @@ ca ks KillServers
 ca restartbattle RestartBattle
 ca kc StopClient
 "search map
-nnoremap <expr> <leader>ft ':GrepperRg -t py -w  ' . g:game_project_root. '<C-Left><Left>'
-nnoremap <expr> <leader>fc ':GrepperRg -t py -w  ' . g:game_project_root. '\client\script<C-Left><Left>'
-nnoremap <expr> <leader>fs ':GrepperRg -t py -w  ' . g:game_project_root. '\server<C-Left><Left>'
-nnoremap <expr> <leader>fa ':GrepperRg -w  ' . g:game_project_root. '\client\res\ui\as3<C-Left><Left>'
+nnoremap <expr> <leader>fc ':CtrlSF -filetype py  ' . g:game_project_root. '\client\script<C-Left><Left>'
+nnoremap <expr> <leader>fs ':CtrlSF -filetype py  ' . g:game_project_root. '\server<C-Left><Left>'
 nnoremap <expr> <leader>vp ':silent! !start /B pyprof2calltree -k -i ' . g:game_project_root .  '/profresult.prof' . "\<CR>"
 
 "G4 routine end
