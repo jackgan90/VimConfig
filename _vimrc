@@ -683,8 +683,8 @@ ca ks KillServers
 ca restartbattle RestartBattle
 ca kc StopClient
 "search map
-nnoremap <expr> <leader>fc ':CtrlSF -filetype py  ' . g:game_project_root. '\client\script<C-Left><Left>'
-nnoremap <expr> <leader>fs ':CtrlSF -filetype py  ' . g:game_project_root. '\server<C-Left><Left>'
+nnoremap <expr> <leader>fc ':CtrlSF -filetype py -W  ' . g:game_project_root. '\client\script<C-Left><Left>'
+nnoremap <expr> <leader>fs ':CtrlSF -filetype py -W  ' . g:game_project_root. '\server<C-Left><Left>'
 nnoremap <expr> <leader>vp ':silent! !start /B pyprof2calltree -k -i ' . g:game_project_root .  '/profresult.prof' . "\<CR>"
 
 "G4 routine end
