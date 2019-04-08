@@ -7,59 +7,25 @@ function! s:UsingPython3()
 endfunction
 let s:using_python3 = s:UsingPython3()
 let s:python_until_eof = s:using_python3 ? "python3 << EOF" : "python << EOF"
-"python with virtualenv support
-func! s:SetUpVirtualEnv()
-	exec s:python_until_eof
-import os
-import sys
-if 'VIRTUAL_EVN' in os.environ:
-	project_base_dir = os.environ['VIRTUAL_EVN']
-	activate_this = os.path.join(project_base_dir, 'bin/activate_this.py')
-	execfile(activate_this, dict(__file__=activate_this))
-EOF
-endf
-call s:SetUpVirtualEnv()
 
-if has('win32')
-	source $VIMRUNTIME/defaults.vim
-	source $VIMRUNTIME/mswin.vim
-endif
-"behave mswin
-
-"settings for glsl.vim
-let g:glsl_file_extensions = '*.glsl,*.vs,*.ps,*.frag,*.vert,*.nfx,*.spzs'
 filetype off
 if has('win32')
 	set rtp+=%USERPROFILE%/.vim/bundle/Vundle.vim
 else
 	set rtp+=~/.vim/bundle/Vundle.vim
 endif
-
-func! IsMac()
-	if !has("unix")
-		return 0
-	endif
-	let s:uname = system("uname")
-	if s:uname == "Darwin\n"
-		return 1
-	else
-		return 0
-	endif
-	return 0
-endf
+filetype plugin indent on
 
 call vundle#begin()
 
 Plugin 'VundleVim/Vundle.vim'
-
-"Plugin 'vim-scripts/indentpython.vim'
 "syntastic check
 Plugin 'scrooloose/syntastic'
 "theme
 "Plugin 'jnurmine/Zenburn'
 "theme
 Plugin 'altercation/vim-colors-solarized'
-Plugin 'JazzCore/ctrlp-cmatcher'
+"Plugin 'JazzCore/ctrlp-cmatcher'
 "directory management
 Plugin 'scrooloose/nerdtree'
 "nerdtree tabs
@@ -85,14 +51,13 @@ Plugin 'FelikZ/ctrlp-py-matcher'
 
 "for window swapping
 "Plugin 'wesQ3/vim-windowswap'
-Plugin 'beyondmarc/glsl.vim'
-Plugin 'beyondmarc/hlsl.vim'
+Plugin 'tikhomirov/vim-glsl'
 "Plugin 'fugalh/desert.vim'
 "Plugin 'tomasr/molokai'
 "Plugin 'juneedahamed/svnj.vim'
 "Plugin 'powerline/powerline'
 Plugin 'itchyny/lightline.vim'
-Plugin 'juneedahamed/vc.vim'
+"Plugin 'juneedahamed/vc.vim'
 "Plugin 'tpope/vim-surround'
 "Plugin 'tpope/vim-repeat'
 Plugin 'easymotion/vim-easymotion'
@@ -111,42 +76,85 @@ Plugin 'ludovicchabant/vim-gutentags'
 Plugin 'vim-python/python-syntax'
 Plugin 'Shougo/echodoc.vim'
 Plugin 'dracula/vim'
-"python-syntax config start
-let g:python_version_2 = 1
-let g:python_highlight_class_vars = 0
-let g:python_highlight_indent_errors = 0
-let g:python_highlight_space_errors = 0
-let g:python_highlight_operators = 0
-let g:python_highlight_all = 1
-let g:python_slow_sync = 0
-"python-syntax config end
 call vundle#end()
 
+"general options
+set foldmethod=indent
+set foldlevel=99
+"prevent from encoding error
+set encoding=utf-8
+set termencoding=utf-8
+set fileencoding=utf-8
+set fileencodings=utf-8,chinese,latin-1
+"show line numbers
+set nu
+"use system clipboard
+set clipboard=unnamed
+set laststatus=2 " Always display the statusline in all windows
+set guifont=Consolas\ for\ Powerline\ FixedD:h11
+set noshowmode " Hide the default mode text (e.g. -- INSERT -- below the statusline)
+set splitright
+set guioptions-=T
+set guioptions-=m
+set guioptions-=r
+set guioptions-=R
+set guioptions-=l
+set guioptions-=L
+set hlsearch
+set incsearch
+set ignorecase
+set smartcase
+set noexpandtab
+set tabstop=4
+set softtabstop=4
+set shiftwidth=4
+set autoindent
+syntax on
+set background=dark
+
+"platform configuration start
+if has("win32")
+	set nobackup
+	set backupdir=C:\\Temp
+	set backupskip=C:\\Temp\\*
+	set directory=C:\\Temp
+	set undodir=C:\\Temp
+	set writebackup
+	set rop=type:directx
+endif
+if !has('unix')
+	colorscheme dracula
+endif
+"platform configuration end
+
+
 let mapleader = ','
-autocmd! FileType python setlocal noexpandtab tabstop=4 softtabstop=4 shiftwidth=4 autoindent
+au! FileType python setlocal noexpandtab tabstop=4 softtabstop=4 shiftwidth=4 autoindent
 au! BufNewFile *.py call setline(1, '# -*- coding: utf-8 -*-')
 au! BufRead,BufNewFile *.as set filetype=javascript
+au! BufNewFile,BufRead *.vs,*.fs,*.glsl,*.nfx,*.spzs set ft=glsl
 "set tags=./tags;,tags
 
 "helper functions
+
+func! IsMac()
+	if !has("unix")
+		return 0
+	endif
+	let s:uname = system("uname")
+	if s:uname == "Darwin\n"
+		return 1
+	else
+		return 0
+	endif
+	return 0
+endf
+
 function! IsBlankLine(lineNum)
 	return getline(a:lineNum) !~# '\v\S'
 endfunction
 
-function! GetVisual()
-        let reg_save = getreg('"') 
-        let regtype_save = getregtype('"') 
-        let cb_save = &clipboard 
-        set clipboard& 
-        normal! ""gvy 
-        let selection = getreg('"') 
-        call setreg('"', reg_save, regtype_save) 
-        let &clipboard = cb_save 
-        return selection 
-endfunction 
-
-
-func! EditMYVIMRC()
+func! EditMyVimRc()
 	let linenum = line('$')
 	let empty_buf = 1
 	for idx in range(1, linenum)
@@ -165,7 +173,7 @@ endf
 "use space to fold
 nnoremap <space> za
 "vimrc editing mapping
-nnoremap <leader>ev :call EditMYVIMRC()<CR>
+nnoremap <leader>ev :call EditMyVimRc()<CR>
 nnoremap <leader>er :source $MYVIMRC<CR>
 "Ycm key mappings
 nnoremap <leader>gl : YcmCompleter GoToDeclaration<CR>
@@ -214,7 +222,20 @@ nnoremap tn :tabnew<CR>
 "for indent guides
 nnoremap <leader>gd :IndentGuidesToggle<CR>
 " incsearch.vim x fuzzy x vim-easymotion
+noremap <silent><expr> <Space>/ incsearch#go(<SID>config_easyfuzzymotion())
+"Per plugin configuration start
 
+"python-syntax config start
+let g:python_version_2 = 1
+let g:python_highlight_class_vars = 0
+let g:python_highlight_indent_errors = 0
+let g:python_highlight_space_errors = 0
+let g:python_highlight_operators = 0
+let g:python_highlight_all = 1
+let g:python_slow_sync = 0
+"python-syntax config end
+
+"easymotion start
 function! s:config_easyfuzzymotion(...) abort
   return extend(copy({
   \   'converters': [incsearch#config#fuzzy#converter()],
@@ -224,77 +245,30 @@ function! s:config_easyfuzzymotion(...) abort
   \   'is_stay': 1
   \ }), get(a:, 1, {}))
 endfunction
+"easymotion end
 
-noremap <silent><expr> <Space>/ incsearch#go(<SID>config_easyfuzzymotion())
-"options
-set foldmethod=indent
-set foldlevel=99
-"prevent from encoding error
-set encoding=utf-8
-set termencoding=utf-8
-set fileencoding=utf-8
-set fileencodings=utf-8,chinese,latin-1
-"show line numbers
-set nu
-"use system clipboard
-set clipboard=unnamed
-set laststatus=2 " Always display the statusline in all windows
-set guifont=Consolas\ for\ Powerline\ FixedD:h11
-set noshowmode " Hide the default mode text (e.g. -- INSERT -- below the statusline)
-set splitright
-set guioptions-=T
-set guioptions-=m
-set guioptions-=r
-set guioptions-=R
-set guioptions-=l
-set guioptions-=L
-set hlsearch
-set incsearch
-set tabstop=4
-set softtabstop=4
-set noexpandtab
-set shiftwidth=4
-if has("win32")
-	set nobackup
-	set backupdir=C:\\Temp
-	set backupskip=C:\\Temp\\*
-	set directory=C:\\Temp
-	set undodir=C:\\Temp
-	set writebackup
-	set rop=type:directx
-endif
-set ignorecase
-set smartcase
-
-filetype plugin indent on
-
-"resolve menu encoding issue
-"source $VIMRUNTIME/delmenu.vim
-"source $VIMRUNTIME/menu.vim
-
-"scheme
-set background=dark
-if !has('unix')
-	colorscheme dracula
-endif
-
-"Per plugin configuration start
-"YCm
+"YCM start
 let g:ycm_autoclose_preview_window_after_completion=1
 let g:ycm_collect_identifiers_from_comments_and_strings = 1
 let g:ycm_collect_identifiers_from_tags_files = 1
-"UltiSnips
+"YCM end
+
+"UltiSnips start
 let g:UltiSnipsExpandTrigger = '<c-j>'
 if has('win32') || has('win64')
 	let g:UltiSnipsSnippetDirectories=[expand('$USERPROFILE').'\.vim\UltiSnips']
 else
 	let g:UltiSnipsSnippetDirectories=['~/.vim/UltiSnips']
 endif
-"NerdTree
+"UltiSnips end
+
+"NerdTree start
 let NERDTreeIgnore=['\.pyc$', '\~$', '\.cache$', '\.exe$', '\.dll$', '\.sfx$', '\.gim$', '\.gis$', '\.jpg$', '\.png$', '\.fla$', '\.swf$', '\.bmp$', '\.map$', '\.scn$', '\.scnex$', '\.tga$', '\.mtg$', '\.ags$', '\.ktx$', '\.mesh$', '\.pvr$', '\.pvr2$', '\.dds$', '\.mtl$', '\.rar$', '\.ttf$', '\.gif$', '\.mp3$', '\.wav$', '\.fsb$', '\.fev$', '\.m4a$'] "ignore files in NERDTree
 let g:nerdtree_tabs_open_on_console_startup=0       "automatically open nerdtree tab on startup
 let g:nerdtree_tabs_open_on_gui_startup = 0
-"ctrlp
+"NerdTree end
+
+"Ctrlp start
 let g:ctrlp_max_files = 0
 if IsMac()
 let g:ctrlp_match_func = { 'match': 'matcher#cmatch' }
@@ -302,7 +276,7 @@ else
 let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
 endif
 let g:ctrlp_use_caching = 1
-"rg
+
 if executable('rg')
 	"Use ag in Ctrlp for listing files
 	set grepprg=rg\ --color=never
@@ -311,38 +285,22 @@ elseif executable('ag')
 	set grepprg=ag\ --nogroup\ --nocolor
 	let g:ctrlp_user_command='ag %s -l --nocolor -g ""'
 endif
-"windows swapping
-"let g:windowswap_map_keys = 0 "prevent default bindings
-"Syntastic
+"Ctrlp end
+
+"Syntastic start
 let g:syntastic_python_checkers = ["pyflakes"]
 set statusline+=%#warningmsg#
 set statusline+=%{SyntasticStatuslineFlag()}
 set statusline+=%*
-
 let g:syntastic_always_populate_loc_list = 1
-if has('win32')
-	nnoremap <silent> <C-CR> :call libcallnr('gvimfullscreen.dll', 'ToggleFullScreen', 0)<CR>
-endif
+"Syntastic end
+
+"gutenttags start
 if IsMac()
 	let g:gutentags_ctags_executable = '/usr/local/bin/ctags'
 endif
-"let g:syntastic_auto_loc_list = 1
-"let g:syntastic_check_on_open = 1
-"let g:syntastic_check_on_wq = 0
+"gutenttags end
 
-"This function is for vc.vim,forcing it to convert line from chinese encoding to
-"utf-8 encoding
-func! Before_vc_setline(start, lines)
-	let s:convlines = []
-	if type(a:lines) == type([])
-		for idx in range(0, len(a:lines) - 1)
-			call add(s:convlines, iconv(a:lines[idx], 'chinese', 'utf-8'))
-		endfor
-	else
-		let s:convlines = iconv(a:lines, 'chinese', 'utf-8')
-	endif
-	return s:convlines
-endf
 "fast rg
 nnoremap <leader>ff :GrepperRg 
 nnoremap <expr> <leader>fw ':GrepperRg -w ' . expand('<cword>') . "\<CR>"
@@ -353,7 +311,6 @@ nnoremap <expr> <leader>fw ':GrepperRg -w ' . expand('<cword>') . "\<CR>"
 "nnoremap <C-M> :tp<CR>
 "Per plugin configuration end
 
-syntax on
 
 function! FindNextBlankLineOrViceVersa(startLine, findBlank)
 	let maxLine = line('$')
@@ -693,37 +650,6 @@ function! GameReloadCurrentFile()
 		execute ':python reload_current_file()'
 	endif
 endfunction
-
-let g:is_generating_ctags = 0
-if exists('*job_start')
-	func! CtagGenerationCallback(channel, msg)
-		echom '[ctags]' . a:msg
-	endf
-
-	func! CtagCloseHandler(channel)
-		echom '[ctags] ------------------- Finished generating ctags for project ------------------------'
-		let g:is_generating_ctags = 0
-	endf
-
-	func! GenerateCtagAsync()
-		if !g:is_generating_ctags
-			let cwd = '.'
-			let l:command = 'ctags -f .\tags --fields=+lS -R .' 
-			echom '[ctags] ------------------- Start to generate ctags for project ------------------------'
-			let l:channel = job_start(l:command, {"callback" : "CtagGenerationCallback", "close_cb" : "CtagCloseHandler"})
-			if ch_status(l:channel) == "open"
-				let g:is_generating_ctags = 1
-			else
-				echom '[ctags]Some error occured when try to launch ctags channel'
-			endif
-		else
-			echom "[ctags]There's already a running ctags process updating project tags! Wait for it to finish patiently"
-		endif
-	endf
-	"nnoremap <F4> :call GenerateCtagAsync()<CR>
-else
-	"nnoremap <expr> <F4> ':silent! !ctags -f .\tags --fields=+lS -R .'. "\<CR>"
-endif
 
 au! BufWrite *.py call GameReloadCurrentFile()
 command! -nargs=? ClientGM python execute_client_gm(<f-args>)
