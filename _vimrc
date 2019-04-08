@@ -223,6 +223,12 @@ nnoremap tn :tabnew<CR>
 nnoremap <leader>gd :IndentGuidesToggle<CR>
 " incsearch.vim x fuzzy x vim-easymotion
 noremap <silent><expr> <Space>/ incsearch#go(<SID>config_easyfuzzymotion())
+"CtrlSF start
+nnoremap <leader>ff :CtrlSF 
+nnoremap <expr> <leader>fw ':CtrlSF ' . expand('<cword>') . "\<CR>"
+nnoremap <leader>ft :CtrlSFToggle<CR>
+"CtrlSF end
+
 "Per plugin configuration start
 
 "python-syntax config start
@@ -301,10 +307,6 @@ if IsMac()
 endif
 "gutenttags end
 
-"CtrlSF start
-nnoremap <leader>ff :CtrlSF 
-nnoremap <expr> <leader>fw ':CtrlSF ' . expand('<cword>') . "\<CR>"
-"CtrlSF end
 "Per plugin configuration end
 
 
