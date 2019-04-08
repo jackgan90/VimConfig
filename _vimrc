@@ -431,6 +431,7 @@ func! s:SetUpDevRoutines()
 DEFAULT_TELNET_PORT = 30000
 import telnetlib
 import subprocess
+import os
 import vim
 telnetClients = {}
 
