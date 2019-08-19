@@ -228,6 +228,9 @@ nnoremap <leader>ff :CtrlSF
 nnoremap <expr> <leader>fw ':CtrlSF ' . expand('<cword>') . "\<CR>"
 nnoremap <leader>ft :CtrlSFToggle<CR>
 "CtrlSF end
+"CtrlP start
+nnoremap <leader>p :CtrlPCurWD<CR>
+"CtrlP end
 
 "Per plugin configuration start
 
