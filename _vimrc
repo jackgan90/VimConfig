@@ -1,4 +1,5 @@
 set langmenu=en_US.UTF-8
+let $LANG = 'en_US'
 function! s:UsingPython3()
   if has('python3')
     return 1
@@ -91,7 +92,7 @@ set nu
 "use system clipboard
 set clipboard=unnamed
 set laststatus=2 " Always display the statusline in all windows
-set guifont=Consolas\ for\ Powerline\ FixedD:h11
+set guifont=Consolas\ NF:h11
 set noshowmode " Hide the default mode text (e.g. -- INSERT -- below the statusline)
 set splitright
 set guioptions-=T
@@ -228,9 +229,6 @@ nnoremap <leader>ff :CtrlSF
 nnoremap <expr> <leader>fw ':CtrlSF ' . expand('<cword>') . "\<CR>"
 nnoremap <leader>ft :CtrlSFToggle<CR>
 "CtrlSF end
-"CtrlP start
-nnoremap <leader>p :CtrlPCurWD<CR>
-"CtrlP end
 
 "Per plugin configuration start
 
@@ -285,6 +283,7 @@ else
 let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
 endif
 let g:ctrlp_use_caching = 1
+let g:ctrlp_working_path_mode = 0
 
 if executable('rg')
 	"Use ag in Ctrlp for listing files
