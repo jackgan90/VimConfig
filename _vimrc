@@ -277,11 +277,7 @@ let g:nerdtree_tabs_open_on_gui_startup = 0
 
 "Ctrlp start
 let g:ctrlp_max_files = 0
-if !has('win32')
-let g:ctrlp_match_func = { 'match': 'matcher#cmatch' }
-else
 let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
-endif
 let g:ctrlp_use_caching = 1
 let g:ctrlp_working_path_mode = 0
 
@@ -418,7 +414,7 @@ function! FindPythonClassUnderCursor()
 endfunction
 
 "game routine start
-let g:game_project_root='H:\bh1\code\trunk'
+let g:game_project_root='J:\bh1\code\trunk'
 "This file provide functionality of executing bat files background in Windows.
 let g:background_bat_helper = 'F:\VimConfig\background_bat_helper.vbs'
 function! GameChangeCWDToProjectRoot()
@@ -668,7 +664,7 @@ command! Blame python blame_current_file_at_cursor()
 command! Diff python show_current_file_diff()
 command! UpDesign python update_game_design()
 command! UpOutsource python update_game_outsource()
-command! LocalExportTable execute('silent! !cd ' . g:game_project_root.  '\client\tools\export_table_tool && export_use_local_rules')
+command! LocalExportTable execute('silent! !cd ' . g:game_project_root.  '\client\tools\export_table_tool && get_diff_and_export')
 command! ModelEditor execute('silent! !start /B ' . g:game_project_root. '\..\..\art\tool_full\modeleditor.exe')
 command! FxEditor execute('silent! !start /B ' . g:game_project_root.  '\..\..\art\tool_full\FxEdit.exe')
 command! SceneEditor execute('silent! !start /B ' . g:game_project_root.  '\..\..\art\tool_full_x64\sceneeditor.exe')
