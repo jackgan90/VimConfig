@@ -1,13 +1,4 @@
 set langmenu=en_US.UTF-8
-let $LANG = 'en_US'
-function! s:UsingPython3()
-  if has('python3')
-    return 1
-  endif
-    return 0
-endfunction
-let s:using_python3 = s:UsingPython3()
-let s:python_until_eof = s:using_python3 ? "python3 << EOF" : "python << EOF"
 
 filetype off
 if has('win32')
@@ -67,7 +58,7 @@ Plugin 'haya14busa/incsearch-fuzzy.vim'
 Plugin 'haya14busa/incsearch-easymotion.vim'
 "code completion
 Plugin 'Valloric/YouCompleteMe'
-Plugin 'SirVer/ultisnips'
+"Plugin 'SirVer/ultisnips'
 Plugin 'honza/vim-snippets'
 "Plugin 'skywind3000/asyncrun.vim'
 Plugin 'nathanaelkane/vim-indent-guides'
@@ -279,7 +270,6 @@ let g:nerdtree_tabs_open_on_gui_startup = 0
 let g:ctrlp_max_files = 0
 let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
 let g:ctrlp_use_caching = 1
-let g:ctrlp_working_path_mode = 0
 
 if executable('rg')
 	"Use ag in Ctrlp for listing files
@@ -414,7 +404,7 @@ function! FindPythonClassUnderCursor()
 endfunction
 
 "game routine start
-let g:game_project_root='J:\bh1\code\trunk'
+let g:game_project_root='E:\bh1\code\trunk'
 "This file provide functionality of executing bat files background in Windows.
 let g:background_bat_helper = 'F:\VimConfig\background_bat_helper.vbs'
 function! GameChangeCWDToProjectRoot()
@@ -424,7 +414,7 @@ endfunction
 
 nnoremap <leader>go :call GameChangeCWDToProjectRoot()<CR>
 func! s:SetUpDevRoutines()
-	exec s:python_until_eof
+python3 << EOF
 
 DEFAULT_TELNET_PORT = 30000
 import telnetlib
@@ -451,7 +441,7 @@ def connect_to_client(callback=None):
 	global telnetClients
 	def do_connect():
 		clientCount = get_client_count()
-		for i in xrange(clientCount):
+		for i in range(clientCount):
 			port =DEFAULT_TELNET_PORT + i
 			if port in telnetClients:
 				continue
@@ -464,14 +454,15 @@ def connect_to_client(callback=None):
 					callback(tn)
 			except:
 				pass
-	import thread
-	thread.start_new_thread(do_connect, ())
+	from threading import Thread
+	t = Thread(target = do_connect, args = ())
+	t.start()
 
 def execute_client_gm(cmd):
 	validPorts = []
 	invalidPorts = []
 	global telnetClients
-	for port, tc in telnetClients.iteritems():
+	for port, tc in telnetClients.items():
 		try:
 			tc.write('$%s\r\n' % cmd)
 			validPorts.append(port)
@@ -494,7 +485,7 @@ def reload_current_file():
 
 def close_telnet_clients():
 	global telnetClients
-	for tc in telnetClients.itervalues():
+	for tc in telnetClients.values():
 		tc.close()
 	telnetClients = {}
 
@@ -522,7 +513,7 @@ def launch_client(count=1):
 		count = int(count)
 	except:
 		count = 1
-	for i in xrange(count):
+	for i in range(count):
 		project_root = vim.eval('g:game_project_root')
 		subprocess.Popen('%s\client\engine\client.exe' % project_root,cwd='%s\client' % project_root)
 
@@ -638,33 +629,33 @@ call s:SetUpDevRoutines()
 let g:game_auto_reload_current_file = 1
 function! GameReloadCurrentFile()
 	if g:game_auto_reload_current_file
-		execute ':python reload_current_file()'
+		execute ':python3 reload_current_file()'
 	endif
 endfunction
 
 au! BufWrite *.py call GameReloadCurrentFile()
-command! -nargs=? ClientGM python execute_client_gm(<f-args>)
-command! ClientGMReload python execute_client_gm('reload')
-command! BattleGMReload python execute_client_gm('reload battle')
-command! ReInitClientTelnet python reinit_client_telnet()
-command! ReloadCurrentFile python reload_current_file()
-command! ReloadServer python reload_server()
+command! -nargs=? ClientGM python3 execute_client_gm(<f-args>)
+command! ClientGMReload python3 execute_client_gm('reload')
+command! BattleGMReload python3 execute_client_gm('reload battle')
+command! ReInitClientTelnet python3 reinit_client_telnet()
+command! ReloadCurrentFile python3 reload_current_file()
+command! ReloadServer python3 reload_server()
 command! StartServer execute('!start /B cd '. g:game_project_root . '\server\ServerLauncher && start.bat')
 command! StartBattle execute('!start /B cd '. g:game_project_root . '\server\ServerLauncher && battle.bat')
-command! -nargs=? StartClient python launch_client(<f-args>)
-command! AllServer python launch_server()
-command! KillServers python kill_server()
+command! -nargs=? StartClient python3 launch_client(<f-args>)
+command! AllServer python3 launch_server()
+command! KillServers python3 kill_server()
 command! RestartBattle execute('!start /B cd ' . g:game_project_root . '\server\ServerLauncher && killbattle.bat && battle.bat')
-command! StopClient python stop_client()
+command! StopClient python3 stop_client()
 command! -nargs=* RunServerScript execute('!start /B cd '. g:game_project_root . '\server\ServerLauncher && '.<q-args>)
-command! UpTrunk python update_game_trunk()
-command! CommitTrunk python commit_game_trunk()
-command! Log python show_current_file_svn_log()
-command! Blame python blame_current_file_at_cursor()
-command! Diff python show_current_file_diff()
-command! UpDesign python update_game_design()
-command! UpOutsource python update_game_outsource()
-command! LocalExportTable execute('silent! !cd ' . g:game_project_root.  '\client\tools\export_table_tool && get_diff_and_export')
+command! UpTrunk python3 update_game_trunk()
+command! CommitTrunk python3 commit_game_trunk()
+command! Log python3 show_current_file_svn_log()
+command! Blame python3 blame_current_file_at_cursor()
+command! Diff python3 show_current_file_diff()
+command! UpDesign python3 update_game_design()
+command! UpOutsource python3 update_game_outsource()
+command! LocalExportTable execute('silent! !cd ' . g:game_project_root.  '\client\tools\export_table_tool && export_use_local_rules')
 command! ModelEditor execute('silent! !start /B ' . g:game_project_root. '\..\..\art\tool_full\modeleditor.exe')
 command! FxEditor execute('silent! !start /B ' . g:game_project_root.  '\..\..\art\tool_full\FxEdit.exe')
 command! SceneEditor execute('silent! !start /B ' . g:game_project_root.  '\..\..\art\tool_full_x64\sceneeditor.exe')
