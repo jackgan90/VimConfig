@@ -59,7 +59,7 @@ Plugin 'haya14busa/incsearch-fuzzy.vim'
 Plugin 'haya14busa/incsearch-easymotion.vim'
 "code completion
 Plugin 'Valloric/YouCompleteMe'
-Plugin 'SirVer/ultisnips'
+"Plugin 'SirVer/ultisnips'
 Plugin 'honza/vim-snippets'
 "Plugin 'skywind3000/asyncrun.vim'
 Plugin 'nathanaelkane/vim-indent-guides'
