@@ -416,7 +416,7 @@ endfunction
 
 nnoremap <leader>go :call GameChangeCWDToProjectRoot()<CR>
 
-py3 << EOF
+python3 << EOF
 DEFAULT_TELNET_PORT = 30000
 import telnetlib
 import subprocess
@@ -455,14 +455,14 @@ def connect_to_client(callback=None):
 					callback(tn)
 			except:
 				pass
-	import thread
-	thread.start_new_thread(do_connect, ())
+	import _thread
+	_thread.start_new_thread(do_connect, ())
 
 def execute_client_gm(cmd):
 	validPorts = []
 	invalidPorts = []
 	global telnetClients
-	for port, tc in telnetClients.iteritems():
+	for port, tc in telnetClients.items():
 		try:
 			tc.write('$%s\r\n' % cmd)
 			validPorts.append(port)
@@ -485,7 +485,7 @@ def reload_current_file():
 
 def close_telnet_clients():
 	global telnetClients
-	for tc in telnetClients.itervalues():
+	for tc in telnetClients.values():
 		tc.close()
 	telnetClients = {}
 
