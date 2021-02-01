@@ -18,13 +18,15 @@ Plugin 'scrooloose/syntastic'
 "Plugin 'jnurmine/Zenburn'
 "theme
 Plugin 'altercation/vim-colors-solarized'
-Plugin 'JazzCore/ctrlp-cmatcher'
+"Plugin 'JazzCore/ctrlp-cmatcher'
 "directory management
 Plugin 'scrooloose/nerdtree'
 "nerdtree tabs
 Plugin 'jistr/vim-nerdtree-tabs'
 "file navigation
 Plugin 'ctrlpvim/ctrlp.vim'
+Plugin 'junegunn/fzf'
+Plugin 'junegunn/fzf.vim'
 
 "Plugin 'rking/ag.vim'
 "Plugin 'mhinz/vim-grepper'
@@ -517,29 +519,18 @@ def launch_client(count=1):
 		project_root = vim.eval('g:game_project_root')
 		subprocess.Popen('%s\client\engine\client.exe' % project_root,cwd='%s\client' % project_root)
 
-def run_bat_in_cmder(script_name):
-	CMDER_ROOT = os.environ.get('CMDER_ROOT', '')
-	if not CMDER_ROOT:
-		print('Failed to find Cmder.Please install it first.')
-		return
-	cmd_string = 'start %s\\vendor\\conemu-maximus5\\ConEmu.exe /icon "%s\\cmder.exe" /title Cmder /loadcfgfile "%s\\config\\ConEmu.xml" /cmd cmd /k "%s\\vendor\\init.bat && %s.bat"' % (CMDER_ROOT, CMDER_ROOT, CMDER_ROOT, CMDER_ROOT, script_name)
-	os.system(cmd_string)
-
 def run_server_bin_script(script_name, silent=False):
 	project_root = vim.eval('g:game_project_root')
 	cur_cwd = os.getcwd()
 	os.chdir('%s/server/bin' % project_root)
-	if os.environ.get('CMDER_ROOT', '') and not silent:
-		run_bat_in_cmder(script_name)
-	else:
-		if silent:
-			background_bat_helper = vim.eval('g:background_bat_helper')
-			if background_bat_helper:
-				os.system('start /b wscript.exe %s %s.bat %%*' % (background_bat_helper, script_name))
-			else:
-				subprocess.Popen('%s.bat' % script_name)
+	if silent:
+		background_bat_helper = vim.eval('g:background_bat_helper')
+		if background_bat_helper:
+			os.system('start /b wscript.exe %s %s.bat %%*' % (background_bat_helper, script_name))
 		else:
 			subprocess.Popen('%s.bat' % script_name)
+	else:
+		subprocess.Popen('%s.bat' % script_name)
 	os.chdir(cur_cwd)
 
 def launch_server():
@@ -633,7 +624,7 @@ function! GameReloadCurrentFile()
 	endif
 endfunction
 
-au! BufWrite *.py call GameReloadCurrentFile()
+"au! BufWrite *.py call GameReloadCurrentFile()
 command! -nargs=? ClientGM py3 execute_client_gm(<f-args>)
 command! ClientGMReload py3 execute_client_gm('reload')
 command! BattleGMReload py3 execute_client_gm('reload battle')
