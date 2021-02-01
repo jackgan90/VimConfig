@@ -293,7 +293,7 @@ let g:syntastic_always_populate_loc_list = 1
 
 "gutenttags start
 if IsMac()
-	let g:gutentags_ctags_executable = '/usr/local/bin/ctags'
+	"let g:gutentags_ctags_executable = '/usr/local/bin/ctags'
 endif
 "gutenttags end
 
