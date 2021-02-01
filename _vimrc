@@ -24,7 +24,7 @@ Plugin 'scrooloose/nerdtree'
 "nerdtree tabs
 Plugin 'jistr/vim-nerdtree-tabs'
 "file navigation
-Plugin 'ctrlpvim/ctrlp.vim'
+"Plugin 'ctrlpvim/ctrlp.vim'
 Plugin 'junegunn/fzf'
 Plugin 'junegunn/fzf.vim'
 
@@ -34,7 +34,7 @@ Plugin 'junegunn/fzf.vim'
 
 Plugin 'scrooloose/nerdcommenter'
 Plugin 'majutsushi/tagbar'
-Plugin 'FelikZ/ctrlp-py-matcher'
+"Plugin 'FelikZ/ctrlp-py-matcher'
 "more beautiful powerline
 "Plugin 'vim-airline/vim-airline'
 "theme
@@ -270,20 +270,24 @@ let g:nerdtree_tabs_open_on_gui_startup = 0
 "NerdTree end
 
 "Ctrlp start
-let g:ctrlp_max_files = 0
-let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
-let g:ctrlp_use_caching = 1
-let g:ctrlp_working_path_mode = 0
+"let g:ctrlp_max_files = 0
+"let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
+"let g:ctrlp_use_caching = 1
+"let g:ctrlp_working_path_mode = 0
 
-if executable('rg')
+"if executable('rg')
 	"Use ag in Ctrlp for listing files
-	set grepprg=rg\ --color=never
-	let g:ctrlp_user_command = "rg -F %s --files --color=never"
-elseif executable('ag')
-	set grepprg=ag\ --nogroup\ --nocolor
-	let g:ctrlp_user_command='ag %s -l --nocolor -g ""'
-endif
+	"set grepprg=rg\ --color=never
+	"let g:ctrlp_user_command = "rg -F %s --files --color=never"
+"elseif executable('ag')
+	"set grepprg=ag\ --nogroup\ --nocolor
+	"let g:ctrlp_user_command='ag %s -l --nocolor -g ""'
+"endif
 "Ctrlp end
+
+"fzf start
+nnoremap <C-p> :Files<CR>
+"fzf end
 
 "Syntastic start
 let g:syntastic_python_checkers = ["pyflakes"]
