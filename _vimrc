@@ -291,12 +291,6 @@ set statusline+=%*
 let g:syntastic_always_populate_loc_list = 1
 "Syntastic end
 
-"gutenttags start
-if IsMac()
-	"let g:gutentags_ctags_executable = '/usr/local/bin/ctags'
-endif
-"gutenttags end
-
 "Per plugin configuration end
 
 
