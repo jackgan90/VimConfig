@@ -2,38 +2,32 @@ set langmenu=en_US.UTF-8
 let $LANG = 'en_US'
 
 filetype off
-if has('win32')
-	set rtp+=%USERPROFILE%/.vim/bundle/Vundle.vim
-else
-	set rtp+=~/.vim/bundle/Vundle.vim
-endif
 filetype plugin indent on
 
-call vundle#begin()
+call plug#begin()
 
-Plugin 'VundleVim/Vundle.vim'
 "syntastic check
-Plugin 'scrooloose/syntastic'
+Plug 'scrooloose/syntastic'
 "theme
 "Plugin 'jnurmine/Zenburn'
 "theme
-Plugin 'altercation/vim-colors-solarized'
+Plug 'altercation/vim-colors-solarized'
 "Plugin 'JazzCore/ctrlp-cmatcher'
 "directory management
-Plugin 'scrooloose/nerdtree'
+Plug 'scrooloose/nerdtree'
 "nerdtree tabs
-Plugin 'jistr/vim-nerdtree-tabs'
+Plug 'jistr/vim-nerdtree-tabs'
 "file navigation
 "Plugin 'ctrlpvim/ctrlp.vim'
-Plugin 'junegunn/fzf'
-Plugin 'junegunn/fzf.vim'
+Plug 'junegunn/fzf'
+Plug 'junegunn/fzf.vim'
 
 "Plugin 'rking/ag.vim'
 "Plugin 'mhinz/vim-grepper'
 
 
-Plugin 'scrooloose/nerdcommenter'
-Plugin 'majutsushi/tagbar'
+Plug 'scrooloose/nerdcommenter'
+Plug 'majutsushi/tagbar'
 "Plugin 'FelikZ/ctrlp-py-matcher'
 "more beautiful powerline
 "Plugin 'vim-airline/vim-airline'
@@ -46,32 +40,33 @@ Plugin 'majutsushi/tagbar'
 
 "for window swapping
 "Plugin 'wesQ3/vim-windowswap'
-Plugin 'tikhomirov/vim-glsl'
+Plug 'tikhomirov/vim-glsl'
 "Plugin 'fugalh/desert.vim'
 "Plugin 'tomasr/molokai'
 "Plugin 'juneedahamed/svnj.vim'
 "Plugin 'powerline/powerline'
-Plugin 'itchyny/lightline.vim'
+Plug 'itchyny/lightline.vim'
 "Plugin 'juneedahamed/vc.vim'
 "Plugin 'tpope/vim-surround'
 "Plugin 'tpope/vim-repeat'
-Plugin 'easymotion/vim-easymotion'
-Plugin 'haya14busa/incsearch.vim'
-Plugin 'haya14busa/incsearch-fuzzy.vim'
-Plugin 'haya14busa/incsearch-easymotion.vim'
+Plug 'easymotion/vim-easymotion'
+Plug 'haya14busa/incsearch.vim'
+Plug 'haya14busa/incsearch-fuzzy.vim'
+Plug 'haya14busa/incsearch-easymotion.vim'
 "code completion
-Plugin 'Valloric/YouCompleteMe'
+"Plugin 'Valloric/YouCompleteMe'
 "Plugin 'SirVer/ultisnips'
-Plugin 'honza/vim-snippets'
+Plug 'honza/vim-snippets'
 "Plugin 'skywind3000/asyncrun.vim'
-Plugin 'nathanaelkane/vim-indent-guides'
-Plugin 'dyng/ctrlsf.vim'
-Plugin 'jiangmiao/auto-pairs'
-Plugin 'ludovicchabant/vim-gutentags'
-Plugin 'vim-python/python-syntax'
-Plugin 'Shougo/echodoc.vim'
-Plugin 'dracula/vim'
-call vundle#end()
+Plug 'nathanaelkane/vim-indent-guides'
+Plug 'dyng/ctrlsf.vim'
+Plug 'jiangmiao/auto-pairs'
+Plug 'ludovicchabant/vim-gutentags'
+Plug 'vim-python/python-syntax'
+Plug 'Shougo/echodoc.vim'
+Plug 'dracula/vim'
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+call plug#end()
 
 "general options
 set foldmethod=indent
@@ -406,9 +401,9 @@ function! FindPythonClassUnderCursor()
 endfunction
 
 "game routine start
-let g:game_project_root='J:\bh1\code\trunk'
+let g:game_project_root='E:\bh1\code\trunk'
 "This file provide functionality of executing bat files background in Windows.
-let g:background_bat_helper = 'F:\VimConfig\background_bat_helper.vbs'
+let g:background_bat_helper = 'E:\VimConfig\background_bat_helper.vbs'
 function! GameChangeCWDToProjectRoot()
 	execute 'normal! :cd '. g:game_project_root. "\<CR>"
 	call nerdtree#ui_glue#chRootCwd()
